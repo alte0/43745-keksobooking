@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Максим Дмитриев](https://up.htmlacademy.ru/javascript/13/user/43745).
-* Наставник: `Неизвестно`.
+* Наставник: [Андрей Карякин](https://htmlacademy.ru/profile/id133011).
 
 ---
 
