@@ -7,7 +7,7 @@
   var PRICE_MIN = 1000;
   var PRICE_MAX = 1000000;
   var ADS_TYPE = ['palace', 'flat', 'house', 'bungalo'];
-  var ADS_TYPE_RUS = [{'palace': 'Дворец'}, {'flat': 'Квартира'}, {'house': 'Дом'}, {'bungalo': 'Бунгало'}];
+  var ADS_TYPE_RUS = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
   var ROOMS_MIN = 1;
   var ROOMS_MAX = 5;
   var GUESTS_MIN = 0;
@@ -18,17 +18,18 @@
   var Y_PIN_MIN = 150;
   var Y_PIN_MAX = 500;
   var FEATURES_ADS = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+  var MAP = document.querySelector('.map');
+  var TEMPLATE = document.querySelector('template').content;
+  var MAP_PIN = TEMPLATE.querySelector('.map__pin');
+  var POPUP_FEATURE = TEMPLATE.querySelector('.popup__feature');
+  var POPUP_PHOTO = TEMPLATE.querySelector('.popup__photo');
+  var MAP_PINS = document.querySelector('.map__pins');
+  var MAP_CARD = TEMPLATE.querySelector('.map__card');
+  var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
 
   // перевод вида жилья
-  var translateAdsType = function (array, value) {
-    var result;
-    for (var i = 0; i < array.length; i++) {
-      if (array[i][value]) {
-        result = array[i][value];
-      }
-    }
-
-    return result;
+  var translateAdsType = function (obj, value) {
+    return obj[value];
   };
 
   // случайное число от min до max
@@ -116,12 +117,11 @@
   };
   var listAds = getAdsList(ADS_COUNT);
 
-  document.querySelector('.map').classList.remove('map--faded');
-  var TEMPLATE = document.querySelector('template');
+  MAP.classList.remove('map--faded');
 
   // метка
   var renderPin = function (pin) {
-    var element = TEMPLATE.content.querySelector('.map__pin').cloneNode(true);
+    var element = MAP_PIN.cloneNode(true);
 
     element.style.left = pin.location.x + 'px';
     element.style.top = pin.location.y + 'px';
@@ -145,7 +145,7 @@
   };
   // feature
   var renderFeature = function (feature) {
-    var element = TEMPLATE.content.querySelector('.popup__feature').cloneNode(true);
+    var element = POPUP_FEATURE.cloneNode(true);
     element.className = 'popup__feature';
     element.classList.add('popup__feature--' + feature);
 
@@ -162,7 +162,7 @@
   };
   // фото
   var renderPhoto = function (imgSrc) {
-    var element = TEMPLATE.content.querySelector('.popup__photo').cloneNode(true);
+    var element = POPUP_PHOTO.cloneNode(true);
     element.src = imgSrc;
 
     return element;
@@ -177,10 +177,10 @@
     return fragment;
   };
 
-  document.querySelector('.map__pins').appendChild(renderPins(listAds));
+  MAP_PINS.appendChild(renderPins(listAds));
   // обьявление
   var renderAds = function (array) {
-    var element = TEMPLATE.content.querySelector('.map__card').cloneNode(true);
+    var element = MAP_CARD.cloneNode(true);
     element.querySelector('.popup__title').textContent = array[0].offer.title;
     element.querySelector('.popup__text--address').textContent = array[0].offer.address;
     element.querySelector('.popup__text--price').textContent = array[0].offer.price + '₽/ночь';
@@ -197,6 +197,6 @@
 
     return element;
   };
-  document.querySelector('.map__filters-container').before(renderAds(listAds));
+  MAP_FILTERS_CONTAINER.before(renderAds(listAds));
 
 })();
