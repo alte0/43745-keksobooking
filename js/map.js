@@ -1,0 +1,199 @@
+'use strict';
+
+(function () {
+
+  var ADS_COUNT = 8;
+  var ADS_TITLE = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
+  var PRICE_MIN = 1000;
+  var PRICE_MAX = 1000000;
+  var ADS_TYPE = ['palace', 'flat', 'house', 'bungalo'];
+  var ADS_TYPE_RUS = [{'palace': 'Дворец'}, {'flat': 'Квартира'}, {'house': 'Дом'}, {'bungalo': 'Бунгало'}];
+  var ROOMS_MIN = 1;
+  var ROOMS_MAX = 5;
+  var GUESTS_MIN = 0;
+  var GUESTS_MAX = 5;
+  var FIXED_TIME = ['12: 00', '13: 00', '14: 00'];
+  var X_PIN_MIN = 300;
+  var X_PIN_MAX = 900;
+  var Y_PIN_MIN = 150;
+  var Y_PIN_MAX = 500;
+  var FEATURES_ADS = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+
+  // перевод вида жилья
+  var translateAdsType = function (array, value) {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i][value]) {
+        return array[i][value];
+      }
+    }
+  };
+
+  // случайное число от min до max
+  var getRandomNumber = function (min, max) {
+    return min + Math.floor(Math.random() * (max + 1 - min));
+  };
+  // случайный индекс из массива
+  var getRandomItem = function (array) {
+    return getRandomNumber(0, array.length - 1);
+  };
+  // сравнение значения с индексом из массива
+  var compareValuesArrayIndex = function (array, min, max) {
+    var value = getRandomNumber(min, max).toString();
+    var flag = true;
+    if (array.length > 0) {
+      while (flag) {
+        for (var i = 0; i < array.length; i++) {
+          if (array[i] === value) {
+            value = getRandomNumber(min, max).toString();
+            break;
+          } else if (array[i] === array[array.length - 1]) {
+            flag = false;
+          }
+        }
+      }
+    }
+    array.push(value);
+    return value;
+  };
+  // сравнение значения со значением из массива
+  var compareValuesArrayValue = function (arrayTemp, array) {
+    var value = array[getRandomItem(array)];
+    var flag = true;
+    if (arrayTemp.length > 0) {
+      while (flag) {
+        for (var i = 0; i < arrayTemp.length; i++) {
+          if (arrayTemp[i] === value) {
+            value = array[getRandomItem(array)];
+            break;
+          } else if (arrayTemp[i] === arrayTemp[arrayTemp.length - 1]) {
+            flag = false;
+          }
+        }
+      }
+    }
+    arrayTemp.push(value);
+    return value;
+  };
+
+  var getSliceArray = function (array, endIndexArr) {
+    return array.slice(0, endIndexArr + 1);
+  };
+
+  var getAdsList = function (count) {
+    var listAds = [];
+    var avatarTemp = [];
+    var titleTemp = [];
+
+    for (var i = 0; i < count; i++) {
+      listAds.push({
+        'author': {
+          'avatar': 'img/avatars/user0' + compareValuesArrayIndex(avatarTemp, 1, 8) + '.png' // не повторяются
+        },
+        'offer': {
+          'title': compareValuesArrayValue(titleTemp, ADS_TITLE), // не повторяются
+          'address': '600, 350', // не понятно
+          'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
+          'type': ADS_TYPE[getRandomItem(ADS_TYPE)],
+          'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
+          'guests': getRandomNumber(GUESTS_MIN, GUESTS_MAX),
+          'checkin': FIXED_TIME[getRandomItem(FIXED_TIME)],
+          'checkout': FIXED_TIME[getRandomItem(FIXED_TIME)],
+          'features': getSliceArray(FEATURES_ADS, getRandomItem(FEATURES_ADS)),
+          'description': '',
+          'photos': ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
+        },
+        'location': {
+          'x': getRandomNumber(X_PIN_MIN, X_PIN_MAX),
+          'y': getRandomNumber(Y_PIN_MIN, Y_PIN_MAX)
+        }
+      });
+    }
+
+    return listAds;
+  };
+  var listAds = getAdsList(ADS_COUNT);
+
+  document.querySelector('.map').classList.remove('map--faded');
+  var TEMPLATE = document.querySelector('template');
+
+  // метка
+  var renderPin = function (pin) {
+    var element = TEMPLATE.content.querySelector('.map__pin').cloneNode(true);
+
+    element.style.left = pin.location.x + 'px';
+    element.style.top = pin.location.y + 'px';
+    element.style.marginLeft = -25 + 'px';
+    element.style.marginTop = -70 + 'px';
+    element.querySelector('img').src = pin.author.avatar;
+    element.querySelector('img').alt = pin.offer.title;
+
+    return element;
+  };
+
+  // метки
+  var renderPins = function (pins) {
+    var fragment = document.createDocumentFragment();
+
+    pins.forEach(function (item) {
+      fragment.appendChild(renderPin(item));
+    });
+
+    return fragment;
+  };
+  // feature
+  var renderFeature = function (feature) {
+    var element = TEMPLATE.content.querySelector('.popup__feature').cloneNode(true);
+    element.className = 'popup__feature';
+    element.classList.add('popup__feature--' + feature);
+
+    return element;
+  };
+  // features
+  var renderFeatures = function (array) {
+    var fragment = document.createDocumentFragment();
+    array.forEach(function (item) {
+      fragment.appendChild(renderFeature(item));
+    });
+
+    return fragment;
+  };
+  // фото
+  var renderPhoto = function (imgSrc) {
+    var element = TEMPLATE.content.querySelector('.popup__photo').cloneNode(true);
+    element.src = imgSrc;
+
+    return element;
+  };
+  // фотографии
+  var renderPhotos = function (array) {
+    var fragment = document.createDocumentFragment();
+    array.forEach(function (item) {
+      fragment.appendChild(renderPhoto(item));
+    });
+
+    return fragment;
+  };
+
+  document.querySelector('.map__pins').appendChild(renderPins(listAds));
+  // обьявление
+  var renderAds = function (array) {
+    var element = TEMPLATE.content.querySelector('.map__card').cloneNode(true);
+    element.querySelector('.popup__title').textContent = array[0].offer.title;
+    element.querySelector('.popup__text--address').textContent = array[0].offer.address;
+    element.querySelector('.popup__text--price').textContent = array[0].offer.price + '₽/ночь';
+    element.querySelector('.popup__type').textContent = translateAdsType(ADS_TYPE_RUS, array[0].offer.type); // вывести русское название
+    element.querySelector('.popup__text--capacity').textContent = array[0].offer.rooms + ' комнаты для ' + array[0].offer.guests + ' гостей';
+    var ul = element.querySelector('.popup__features');
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
+    }
+    ul.prepend(renderFeatures(array[0].offer.features)); // список фич
+    element.querySelector('.popup__description').textContent = array[0].offer.description;
+    element.querySelector('.popup__photo').replaceWith(renderPhotos(array[0].offer.photos)); // список изображений
+    element.querySelector('.popup__avatar').src = array[0].author.avatar;
+
+    return element;
+  };
+  document.querySelector('.map__filters-container').before(renderAds(listAds));
+
+})();
