@@ -21,11 +21,14 @@
 
   // перевод вида жилья
   var translateAdsType = function (array, value) {
+    var result;
     for (var i = 0; i < array.length; i++) {
       if (array[i][value]) {
-        return array[i][value];
+        result = array[i][value];
       }
     }
+
+    return result;
   };
 
   // случайное число от min до max
