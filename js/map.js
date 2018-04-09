@@ -40,29 +40,14 @@
   var getRandomItem = function (array) {
     return getRandomNumber(0, array.length - 1);
   };
-  // сравнение значения с индексом из массива
-  var compareValuesArrayIndex = function (array, min, max) {
-    if (array.length < 1) {
-      for (var i = min; i <= max; i++) {
-        array.push(i);
-      }
-    }
-    var valueIndex = getRandomNumber(0, array.length - 1);
-    var value = array[valueIndex];
-    array.splice(valueIndex, 1);
-    return value;
-  };
-  // сравнение значения со значением из массива
-  var compareValuesArrayValue = function (arrayTemp, array) {
+  // получение значения индекса из массива
+  var getValuesOfIndexArray = function (arrayTemp, array) {
     if (arrayTemp.length < 1) {
       array.forEach(function (item) {
         arrayTemp.push(item);
       });
     }
-    var valueIndex = getRandomNumber(0, arrayTemp.length - 1);
-    var value = arrayTemp[valueIndex];
-    arrayTemp.splice(valueIndex, 1);
-    return value;
+    return arrayTemp.pop();
   };
 
   var getSliceArray = function (array, endIndexArr) {
@@ -71,17 +56,16 @@
 
   var getAdsList = function (count) {
     var listAds = [];
-    var avatarTemp = [];
     var titleTemp = [];
 
-    for (var i = 0; i < count; i++) {
+    for (var i = 1; i <= count; i++) {
       listAds.push({
         'author': {
-          'avatar': 'img/avatars/user0' + compareValuesArrayIndex(avatarTemp, 1, 8) + '.png' // не повторяются
+          'avatar': 'img/avatars/user0' + i + '.png'
         },
         'offer': {
-          'title': compareValuesArrayValue(titleTemp, ADS_TITLE), // не повторяются
-          'address': '600, 350', // не понятно
+          'title': getValuesOfIndexArray(titleTemp, ADS_TITLE),
+          'address': '600, 350',
           'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
           'type': ADS_TYPE[getRandomItem(ADS_TYPE)],
           'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
