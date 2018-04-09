@@ -42,40 +42,26 @@
   };
   // сравнение значения с индексом из массива
   var compareValuesArrayIndex = function (array, min, max) {
-    var value = getRandomNumber(min, max).toString();
-    var flag = true;
-    if (array.length > 0) {
-      while (flag) {
-        for (var i = 0; i < array.length; i++) {
-          if (array[i] === value) {
-            value = getRandomNumber(min, max).toString();
-            break;
-          } else if (array[i] === array[array.length - 1]) {
-            flag = false;
-          }
-        }
+    if (array.length < 1) {
+      for (var i = min; i <= max; i++) {
+        array.push(i);
       }
     }
-    array.push(value);
+    var valueIndex = getRandomNumber(0, array.length - 1);
+    var value = array[valueIndex];
+    array.splice(valueIndex, 1);
     return value;
   };
   // сравнение значения со значением из массива
   var compareValuesArrayValue = function (arrayTemp, array) {
-    var value = array[getRandomItem(array)];
-    var flag = true;
-    if (arrayTemp.length > 0) {
-      while (flag) {
-        for (var i = 0; i < arrayTemp.length; i++) {
-          if (arrayTemp[i] === value) {
-            value = array[getRandomItem(array)];
-            break;
-          } else if (arrayTemp[i] === arrayTemp[arrayTemp.length - 1]) {
-            flag = false;
-          }
-        }
-      }
+    if (arrayTemp.length < 1) {
+      array.forEach(function (item) {
+        arrayTemp.push(item);
+      });
     }
-    arrayTemp.push(value);
+    var valueIndex = getRandomNumber(0, arrayTemp.length - 1);
+    var value = arrayTemp[valueIndex];
+    arrayTemp.splice(valueIndex, 1);
     return value;
   };
 
