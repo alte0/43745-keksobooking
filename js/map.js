@@ -37,17 +37,12 @@
     return min + Math.floor(Math.random() * (max + 1 - min));
   };
   // случайный индекс из массива
-  var getRandomItem = function (array) {
+  var getRandomIndex = function (array) {
     return getRandomNumber(0, array.length - 1);
   };
-  // получение значения индекса из массива
-  var getValuesOfIndexArray = function (arrayTemp, array) {
-    if (arrayTemp.length < 1) {
-      array.forEach(function (item) {
-        arrayTemp.push(item);
-      });
-    }
-    return arrayTemp.pop();
+  // получение случайного элемента из массива
+  var getRandomElement = function (array) {
+    return array.splice(array[getRandomIndex(array)], 1);
   };
 
   var getSliceArray = function (array, endIndexArr) {
@@ -57,6 +52,9 @@
   var getAdsList = function (count) {
     var listAds = [];
     var titleTemp = [];
+    ADS_TITLE.forEach(function (item) {
+      titleTemp.push(item);
+    });
 
     for (var i = 1; i <= count; i++) {
       listAds.push({
@@ -64,15 +62,15 @@
           'avatar': 'img/avatars/user0' + i + '.png'
         },
         'offer': {
-          'title': getValuesOfIndexArray(titleTemp, ADS_TITLE),
+          'title': getRandomElement(titleTemp),
           'address': '600, 350',
           'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
-          'type': ADS_TYPE[getRandomItem(ADS_TYPE)],
+          'type': ADS_TYPE[getRandomIndex(ADS_TYPE)],
           'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
           'guests': getRandomNumber(GUESTS_MIN, GUESTS_MAX),
-          'checkin': FIXED_TIME[getRandomItem(FIXED_TIME)],
-          'checkout': FIXED_TIME[getRandomItem(FIXED_TIME)],
-          'features': getSliceArray(FEATURES_ADS, getRandomItem(FEATURES_ADS)),
+          'checkin': FIXED_TIME[getRandomIndex(FIXED_TIME)],
+          'checkout': FIXED_TIME[getRandomIndex(FIXED_TIME)],
+          'features': getSliceArray(FEATURES_ADS, getRandomIndex(FEATURES_ADS)),
           'description': '',
           'photos': ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
         },
