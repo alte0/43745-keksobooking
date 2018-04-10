@@ -40,10 +40,6 @@
   var getRandomIndex = function (array) {
     return getRandomNumber(0, array.length - 1);
   };
-  // получение случайного элемента из массива
-  var getRandomElement = function (array) {
-    return array.splice(array[getRandomIndex(array)], 1);
-  };
 
   var getSliceArray = function (array, endIndexArr) {
     return array.slice(0, endIndexArr + 1);
@@ -51,10 +47,14 @@
 
   var getAdsList = function (count) {
     var listAds = [];
-    var titleTemp = [];
-    ADS_TITLE.forEach(function (item) {
-      titleTemp.push(item);
-    });
+    var elementGetter = function (array) {
+      var cloneArray = array.slice(0);
+      return function () {
+        var index = getRandomIndex(cloneArray);
+        return cloneArray.splice(index, 1);
+      };
+    };
+    var getRandomTitle = elementGetter(ADS_TITLE);
 
     for (var i = 1; i <= count; i++) {
       listAds.push({
@@ -62,7 +62,7 @@
           'avatar': 'img/avatars/user0' + i + '.png'
         },
         'offer': {
-          'title': getRandomElement(titleTemp),
+          'title': getRandomTitle(),
           'address': '600, 350',
           'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
           'type': ADS_TYPE[getRandomIndex(ADS_TYPE)],
