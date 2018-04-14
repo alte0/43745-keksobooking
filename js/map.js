@@ -27,6 +27,12 @@
   var MAP_CARD = TEMPLATE.querySelector('.map__card');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
   var NUMBER_AD = 0;
+  var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
+  var AD_FORM = document.querySelector('.ad-form');
+  var INPUT_ADDRESS = document.querySelector('#address');
+  // var mapPin = document.querySelector('.map__pin');
+  var listAds;
+  // var POPUP_CLOSE = document.querySelector('.popup__close');
 
   // перевод вида жилья
   var translateAdsType = function (obj, value) {
@@ -62,7 +68,7 @@
   };
 
   var getAdsList = function (count) {
-    var listAds = [];
+    var listAdsTemp = [];
     var getRandomTitle;
 
     getRandomTitle = elementGetter(ADS_TITLE);
@@ -79,7 +85,7 @@
     };
 
     for (var i = 1; i <= count; i++) {
-      listAds.push({
+      listAdsTemp.push({
         'author': {
           'avatar': 'img/avatars/user0' + i + '.png'
         },
@@ -103,7 +109,7 @@
       });
     }
 
-    return listAds;
+    return listAdsTemp;
   };
 
   // метка
@@ -188,12 +194,58 @@
     return element;
   };
 
-  var listAds = getAdsList(ADS_COUNT);
+  var getCoordinatePin = function (pin) {
+    var leftCoordinatePin = parseInt(pin.style.left, 10);
+    var topCoordinatePin = parseInt(pin.style.top, 10);
+    var heightPin = parseInt(getComputedStyle(pin).height, 10);
+    var widthPin = parseInt(getComputedStyle(pin).width, 10) / 2;
+    return (leftCoordinatePin + widthPin) + ', ' + (topCoordinatePin + heightPin);
+  };
 
-  MAP.classList.remove('map--faded');
+  // функции для событий
+  var deleteElem = function (el) {
+    var element = document.querySelector(el);
+    if (element !== null) {
+      var parentEl = element.parentElement;
+      parentEl.removeChild(element);
+    }
+    return;
+  };
 
-  MAP_PINS.appendChild(renderPins(listAds));
+  // тут хочу написать получение индекса элемента в наборе, чтоб выводить в объевлении не только первое. по типу этого - https://jquery-docs.ru/index/
+  // var getIndexElementThis = function () {};
 
-  MAP_FILTERS_CONTAINER.before(renderAd(listAds, NUMBER_AD));
+  var clickPopupClose = function (evt) {
+    var target = evt.target;
+    if (target.classList.contains('popup__close')) {
+      deleteElem('.map__card');
+      document.removeEventListener('click', clickPopupClose);
+    }
+  };
+
+  var pinsClickHandler = function (evt) {
+    var target = evt.target;
+    if (target.classList.contains('map__pin--main') !== false) {
+      return;
+    }
+
+    deleteElem('.map__card');
+    MAP_FILTERS_CONTAINER.before(renderAd(listAds, NUMBER_AD));
+    // MAP_FILTERS_CONTAINER.before(renderAd(listAds, getIndexElementThis()));
+    document.addEventListener('click', clickPopupClose);
+  };
+
+  var mouseupHandler = function () {
+    MAP.classList.remove('map--faded');
+    AD_FORM.classList.remove('ad-form--disabled');
+    INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+    listAds = getAdsList(ADS_COUNT);
+    MAP_PINS.appendChild(renderPins(listAds));
+    MAP_PIN_MAIN.removeEventListener('mouseup', mouseupHandler);
+    MAP_PINS.addEventListener('click', pinsClickHandler);
+  };
+
+  MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
+
 
 })();
