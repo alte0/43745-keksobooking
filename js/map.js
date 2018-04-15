@@ -242,9 +242,13 @@
 
   var disabledEditAdForm = function (bool) {
     var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
-    for (var i = 0; i < elementsFieldset.length; i++) {
-      elementsFieldset[i].disabled = bool;
-    }
+    // что правильнее использовать тут?
+    // for (var i = 0; i < elementsFieldset.length; i++) {
+    //   elementsFieldset[i].disabled = bool;
+    // }
+    elementsFieldset.forEach(function (item) {
+      item.disabled = bool;
+    })
   };
 
   MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
