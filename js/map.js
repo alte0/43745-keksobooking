@@ -248,7 +248,7 @@
     // }
     elementsFieldset.forEach(function (item) {
       item.disabled = bool;
-    })
+    });
   };
 
   MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
