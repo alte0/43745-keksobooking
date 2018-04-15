@@ -245,7 +245,7 @@
     for (var i = 0; i < elementsFieldset.length; i++) {
       elementsFieldset[i].disabled = bool;
     }
-  }
+  };
 
   MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
   disabledEditAdForm(true);
