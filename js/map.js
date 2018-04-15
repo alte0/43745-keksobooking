@@ -237,9 +237,16 @@
     MAP_PINS.appendChild(renderPins(listAds));
     MAP_PIN_MAIN.removeEventListener('mouseup', mouseupHandler);
     MAP_PINS.addEventListener('click', pinsClickHandler);
+    disabledEditAdForm(false);
   };
 
+  var disabledEditAdForm = function (bool) {
+    var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
+    for (var i = 0; i < elementsFieldset.length; i++) {
+      elementsFieldset[i].disabled = bool;
+    }
+  }
+
   MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
-
-
+  disabledEditAdForm(true);
 })();
