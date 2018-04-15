@@ -242,10 +242,6 @@
 
   var disabledEditAdForm = function (bool) {
     var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
-    // что правильнее использовать тут?
-    // for (var i = 0; i < elementsFieldset.length; i++) {
-    //   elementsFieldset[i].disabled = bool;
-    // }
     elementsFieldset.forEach(function (item) {
       item.disabled = bool;
     });
