@@ -18,6 +18,7 @@
   var Y_PIN_MIN = 150;
   var Y_PIN_MAX = 500;
   var FEATURES_ADS = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+  var LIST_PHOTO = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
   var MAP = document.querySelector('.map');
   var TEMPLATE = document.querySelector('template').content;
   var MAP_PIN = TEMPLATE.querySelector('.map__pin');
@@ -49,9 +50,9 @@
     return getRandomNumber(0, array.length - 1);
   };
 
-  var getSliceArray = function (array, endIndexArr) {
-    return array.slice(0, endIndexArr + 1);
-  };
+  // var getSliceArray = function (array, endIndexArr) {
+  //   return array.slice(0, endIndexArr + 1);
+  // };
 
   var elementGetter = function (array) {
     var cloneArray = array.slice(0);
@@ -73,34 +74,27 @@
 
     getRandomTitle = elementGetter(ADS_TITLE);
 
-    var locationX;
-    var locationY;
-
-    var getRandomFullAdress = function () {
-      locationX = getRandomNumber(X_PIN_MIN, X_PIN_MAX);
-      locationY = getRandomNumber(Y_PIN_MIN, Y_PIN_MAX);
+    for (var i = 1; i <= count; i++) {
+      var locationX = getRandomNumber(X_PIN_MIN, X_PIN_MAX);
+      var locationY = getRandomNumber(Y_PIN_MIN, Y_PIN_MAX);
       var result = locationX.toString() + ', ' + locationY.toString();
 
-      return result;
-    };
-
-    for (var i = 1; i <= count; i++) {
       listAdsTemp.push({
         'author': {
           'avatar': 'img/avatars/user0' + i + '.png'
         },
         'offer': {
           'title': getRandomTitle(),
-          'address': getRandomFullAdress(),
+          'address': result,
           'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
           'type': ADS_TYPE[getRandomIndex(ADS_TYPE)],
           'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
           'guests': getRandomNumber(GUESTS_MIN, GUESTS_MAX),
           'checkin': FIXED_TIME[getRandomIndex(FIXED_TIME)],
           'checkout': FIXED_TIME[getRandomIndex(FIXED_TIME)],
-          'features': getSliceArray(getRandomArrayElements(FEATURES_ADS), getRandomIndex(FEATURES_ADS)),
+          'features': getRandomArrayElements(FEATURES_ADS).slice(0, getRandomIndex(FEATURES_ADS) + 1),
           'description': '',
-          'photos': ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg']
+          'photos': LIST_PHOTO
         },
         'location': {
           'x': locationX,
