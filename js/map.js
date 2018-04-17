@@ -27,7 +27,7 @@
   var MAP_PINS = document.querySelector('.map__pins');
   var MAP_CARD = TEMPLATE.querySelector('.map__card');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
-  var NUMBER_AD = 0;
+  // var NUMBER_AD = 0;
   var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
@@ -107,13 +107,14 @@
   };
 
   // метка
-  var renderPin = function (pin) {
+  var renderPin = function (pin, dataIndex) {
     var element = MAP_PIN.cloneNode(true);
 
     element.style.left = pin.location.x + 'px';
     element.style.top = pin.location.y + 'px';
     element.style.marginLeft = -25 + 'px';
     element.style.marginTop = -70 + 'px';
+    element.dataset.index = dataIndex;
     element.querySelector('img').src = pin.author.avatar;
     element.querySelector('img').alt = pin.offer.title;
 
@@ -124,8 +125,8 @@
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
 
-    pins.forEach(function (item) {
-      fragment.appendChild(renderPin(item));
+    pins.forEach(function (item, i) {
+      fragment.appendChild(renderPin(item, i));
     });
 
     return fragment;
@@ -141,9 +142,9 @@
   };
 
   // features
-  var renderFeatures = function (array) {
+  var renderFeatures = function (features) {
     var fragment = document.createDocumentFragment();
-    array.forEach(function (item) {
+    features.forEach(function (item) {
       fragment.appendChild(renderFeature(item));
     });
 
@@ -159,9 +160,9 @@
   };
 
   // фотографии
-  var renderPhotos = function (array) {
+  var renderPhotos = function (photos) {
     var fragment = document.createDocumentFragment();
-    array.forEach(function (item) {
+    photos.forEach(function (item) {
       fragment.appendChild(renderPhoto(item));
     });
 
@@ -206,9 +207,6 @@
     return;
   };
 
-  // тут хочу написать получение индекса элемента в наборе, чтоб выводить в объевлении не только первое. по типу этого - https://jquery-docs.ru/index/
-  // var getIndexElementThis = function () {};
-
   var clickPopupClose = function (evt) {
     var target = evt.target;
     if (target.classList.contains('popup__close')) {
@@ -222,10 +220,10 @@
     if (target.classList.contains('map__pin--main') !== false) {
       return;
     }
+    var dataIndex = evt.target.dataset.index;
 
     deleteElem('.map__card');
-    MAP_FILTERS_CONTAINER.before(renderAd(listAds, NUMBER_AD));
-    // MAP_FILTERS_CONTAINER.before(renderAd(listAds, getIndexElementThis()));
+    MAP_FILTERS_CONTAINER.before(renderAd(listAds, dataIndex));
     document.addEventListener('click', clickPopupClose);
   };
 
