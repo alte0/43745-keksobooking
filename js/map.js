@@ -7,7 +7,7 @@
   var PRICE_MIN = 1000;
   var PRICE_MAX = 1000000;
   var ADS_TYPE = ['palace', 'flat', 'house', 'bungalo'];
-  var ADS_TYPE_RUS = { 'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало' };
+  var ADS_TYPE_RUS = {'palace': 'Дворец', 'flat': 'Квартира', 'house': 'Дом', 'bungalo': 'Бунгало'};
   var ROOMS_MIN = 1;
   var ROOMS_MAX = 5;
   var GUESTS_MIN = 0;
@@ -32,7 +32,7 @@
   var INPUT_ADDRESS = document.querySelector('#address');
   var listAds;
   var TYPE = document.querySelector('#type');
-  var TYPE_MIN_PRICE = { 'palace': 10000, 'flat': 1000, 'house': 5000, 'bungalo': 0 };
+  var TYPE_MIN_PRICE = {'palace': 10000, 'flat': 1000, 'house': 5000, 'bungalo': 0};
   var TIME_IN = document.querySelector('#timein');
   var TIME_OUT = document.querySelector('#timeout');
   var ROOM_NUMBER = document.querySelector('#room_number');
