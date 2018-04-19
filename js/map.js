@@ -27,13 +27,10 @@
   var MAP_PINS = document.querySelector('.map__pins');
   var MAP_CARD = TEMPLATE.querySelector('.map__card');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
-  // var NUMBER_AD = 0;
   var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
-  // var mapPin = document.querySelector('.map__pin');
   var listAds;
-  // var POPUP_CLOSE = document.querySelector('.popup__close');
 
   // перевод вида жилья
   var translateAdsType = function (obj, value) {
@@ -172,7 +169,7 @@
   // обьявление
   var renderAd = function (array, index) {
     var element = MAP_CARD.cloneNode(true);
-    element.querySelector('.popup__title').textContent = array[index].offer.title;
+    element.querySelector('.popup__title').textContent = array[index]['offer']['title'];
     element.querySelector('.popup__text--address').textContent = array[index].offer.address;
     element.querySelector('.popup__text--price').textContent = array[index].offer.price + '₽/ночь';
     element.querySelector('.popup__type').textContent = translateAdsType(ADS_TYPE_RUS, array[index].offer.type); // вывести русское название
@@ -181,9 +178,13 @@
     while (ul.firstChild) {
       ul.removeChild(ul.firstChild);
     }
-    ul.prepend(renderFeatures(array[index].offer.features)); // список фич
+    ul.appendChild(renderFeatures(array[index].offer.features)); // список фич
     element.querySelector('.popup__description').textContent = array[index].offer.description;
-    element.querySelector('.popup__photo').replaceWith(renderPhotos(array[index].offer.photos)); // список изображений
+    var popupPhotos = element.querySelector('.popup__photos');
+    while (popupPhotos.firstChild) {
+      popupPhotos.removeChild(popupPhotos.firstChild);
+    }
+    popupPhotos.appendChild(renderPhotos(array[index].offer.photos)); // список изображений
     element.querySelector('.popup__avatar').src = array[index].author.avatar;
 
     return element;
@@ -215,16 +216,22 @@
     }
   };
 
-  var pinsClickHandler = function (evt) {
+  var pinClickHandler = function (evt) {
     var target = evt.target;
-    if (target.classList.contains('map__pin--main') !== false) {
-      return;
-    }
-    var dataIndex = evt.target.dataset.index;
 
-    deleteElem('.map__card');
-    MAP_FILTERS_CONTAINER.before(renderAd(listAds, dataIndex));
-    document.addEventListener('click', clickPopupClose);
+    while (target !== MAP_PINS) {
+      if (target.tagName === 'BUTTON') {
+        var dataIndex = target.dataset.index;
+        if (dataIndex) {
+          deleteElem('.map__card');
+          MAP_FILTERS_CONTAINER.parentElement.insertBefore(renderAd(listAds, dataIndex), MAP_FILTERS_CONTAINER);
+          document.addEventListener('click', clickPopupClose);
+        }
+        return;
+      }
+      target = target.parentNode;
+    }
+
   };
 
   var mouseupHandler = function () {
@@ -234,7 +241,7 @@
     listAds = getAdsList(ADS_COUNT);
     MAP_PINS.appendChild(renderPins(listAds));
     MAP_PIN_MAIN.removeEventListener('mouseup', mouseupHandler);
-    MAP_PINS.addEventListener('click', pinsClickHandler);
+    MAP_PINS.addEventListener('click', pinClickHandler, true);
     disabledEditAdForm(false);
   };
 
