@@ -283,36 +283,35 @@
 
   var disabledNumberGuests = function () {
     var capacity = document.querySelector('#capacity');
+    capacity.children[0].selected = true;
+
     for (var i = 0; i < ROOM_NUMBER.options.length; i++) {
       var option = ROOM_NUMBER.options[i];
 
       if (option.selected === true) {
         var firstValue = option.value;
-        // var objEl = {
-        //   1: [1],
-        //   2: [1, 2],
-        //   3: [1, 2, 3],
-        //   100: [0]
-        // };
+        var ratioRooms = {
+          1: [1],
+          2: [1, 2],
+          3: [1, 2, 3],
+          100: [0]
+        };
 
         for (var j = 0; j < capacity.options.length; j++) {
-          var secondValue = capacity.options[j].value;
-          if (firstValue >= secondValue) {
-            capacity.options[j].disabled = false;
-          } else if (firstValue === 100 && secondValue === 0) {
-            capacity.options[j].disabled = false;
-          } else {
+          var secondValue = parseInt(capacity.options[j].value, 10);
+
+          for (var k = 0; k < ratioRooms[firstValue].length; k++) {
+            var ratioValum = ratioRooms[firstValue][k];
+            if (ratioValum === secondValue) {
+              capacity.options[j].disabled = false;
+              break;
+            }
             capacity.options[j].disabled = true;
           }
         }
-
         break;
       }
     }
-    // 1 = 1
-    // 2 = 1,2
-    // 3 = 1,2,3
-    // 100 = 0
   };
 
   var roomChangeHandler = function () {
