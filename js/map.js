@@ -327,6 +327,7 @@
       }
     }
   };
+  var validateCapacity = validateCapacityHandler;
 
   MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
   disabledEditAdForm(true);
@@ -339,5 +340,6 @@
   ROOM_NUMBER.addEventListener('change', roomChangeHandler);
   ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
   CAPACITY.addEventListener('change', validateCapacityHandler);
+  validateCapacity();
 
 })();
