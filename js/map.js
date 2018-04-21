@@ -283,7 +283,6 @@
 
   var disabledNumberGuests = function () {
     var capacity = document.querySelector('#capacity');
-    capacity.children[0].selected = true;
 
     for (var i = 0; i < ROOM_NUMBER.options.length; i++) {
       var option = ROOM_NUMBER.options[i];
@@ -301,8 +300,8 @@
           var secondValue = parseInt(capacity.options[j].value, 10);
 
           for (var k = 0; k < ratioRooms[firstValue].length; k++) {
-            var ratioValum = ratioRooms[firstValue][k];
-            if (ratioValum === secondValue) {
+            var ratioValue = ratioRooms[firstValue][k];
+            if (ratioValue === secondValue) {
               capacity.options[j].disabled = false;
               break;
             }
