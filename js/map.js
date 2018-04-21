@@ -199,7 +199,7 @@
     var leftCoordinatePin = parseInt(pin.style.left, 10);
     var topCoordinatePin = parseInt(pin.style.top, 10);
     var heightPin = parseInt(getComputedStyle(pin).height, 10);
-    var widthPin = parseInt(getComputedStyle(pin).width, 10) / 2;
+    var widthPin = Math.floor(parseInt(getComputedStyle(pin).width, 10) / 2);
     return (leftCoordinatePin + widthPin) + ', ' + (topCoordinatePin + heightPin);
   };
 
