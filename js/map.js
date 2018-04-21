@@ -36,6 +36,7 @@
   var TIME_IN = document.querySelector('#timein');
   var TIME_OUT = document.querySelector('#timeout');
   var ROOM_NUMBER = document.querySelector('#room_number');
+  var CAPACITY = document.querySelector('#capacity');
 
   // перевод вида жилья
   var translateAdsType = function (obj, value) {
@@ -282,7 +283,6 @@
   };
 
   var disabledNumberGuests = function () {
-    var capacity = document.querySelector('#capacity');
 
     for (var i = 0; i < ROOM_NUMBER.options.length; i++) {
       var option = ROOM_NUMBER.options[i];
@@ -296,16 +296,16 @@
           100: [0]
         };
 
-        for (var j = 0; j < capacity.options.length; j++) {
-          var secondValue = parseInt(capacity.options[j].value, 10);
+        for (var j = 0; j < CAPACITY.options.length; j++) {
+          var secondValue = parseInt(CAPACITY.options[j].value, 10);
 
           for (var k = 0; k < ratioRooms[firstValue].length; k++) {
             var ratioValue = ratioRooms[firstValue][k];
             if (ratioValue === secondValue) {
-              capacity.options[j].disabled = false;
+              CAPACITY.options[j].disabled = false;
               break;
             }
-            capacity.options[j].disabled = true;
+            CAPACITY.options[j].disabled = true;
           }
         }
         break;
@@ -317,6 +317,17 @@
     disabledNumberGuests();
   };
 
+  var validateCapacityHandler = function () {
+    for (var g = 0; g < CAPACITY.options.length; g++) {
+      if (CAPACITY.options[g].selected === true && CAPACITY.options[g].disabled === true) {
+        CAPACITY.setCustomValidity('Выбирите значение из списка.');
+        break;
+      } else {
+        CAPACITY.setCustomValidity('');
+      }
+    }
+  };
+
   MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
   disabledEditAdForm(true);
   minPrice();
@@ -326,6 +337,7 @@
   TIME_IN.addEventListener('change', timeInChangeHandler);
   TIME_OUT.addEventListener('change', timeOutChangeHandler);
   ROOM_NUMBER.addEventListener('change', roomChangeHandler);
-
+  ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
+  CAPACITY.addEventListener('change', validateCapacityHandler);
 
 })();
