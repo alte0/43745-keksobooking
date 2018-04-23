@@ -246,17 +246,6 @@
 
   };
 
-  var mouseupHandler = function () {
-    MAP.classList.remove('map--faded');
-    AD_FORM.classList.remove('ad-form--disabled');
-    INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
-    listAds = getAdsList(ADS_COUNT);
-    MAP_PINS.appendChild(renderPins(listAds));
-    MAP_PIN_MAIN.removeEventListener('mouseup', mouseupHandler);
-    MAP_PINS.addEventListener('click', pinClickHandler, true);
-    disabledEditAdForm(false);
-  };
-
   var disabledEditAdForm = function (bool) {
     var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
     elementsFieldset.forEach(function (item) {
@@ -329,7 +318,6 @@
   };
   var validateCapacity = validateCapacityHandler;
 
-  MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
   disabledEditAdForm(true);
   minPrice();
   disabledNumberGuests();
@@ -341,5 +329,53 @@
   ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
   CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
+
+  MAP_PIN_MAIN.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    if (MAP.classList.contains('map--faded')) {
+      MAP.classList.remove('map--faded');
+      AD_FORM.classList.remove('ad-form--disabled');
+      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+      listAds = getAdsList(ADS_COUNT);
+      MAP_PINS.appendChild(renderPins(listAds));
+      MAP_PINS.addEventListener('click', pinClickHandler, true);
+      disabledEditAdForm(false);
+    }
+
+    // начальные координаты указателя мыши
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      // кординаты перемещения
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY,
+      };
+
+      MAP_PIN_MAIN.style.top = (MAP_PIN_MAIN.offsetTop - shift.y) + 'px';
+      MAP_PIN_MAIN.style.left = (MAP_PIN_MAIN.offsetLeft - shift.x) + 'px';
+    };
+
+    var onMouseUp = function () {
+      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
 
 })();
