@@ -37,6 +37,12 @@
   var TIME_OUT = document.querySelector('#timeout');
   var ROOM_NUMBER = document.querySelector('#room_number');
   var CAPACITY = document.querySelector('#capacity');
+  var RATIO_ROOMS = {
+    1: [1],
+    2: [1, 2],
+    3: [1, 2, 3],
+    100: [0]
+  };
 
   // перевод вида жилья
   var translateAdsType = function (obj, value) {
@@ -289,25 +295,19 @@
 
       if (option.selected === true) {
         var firstValue = option.value;
-        var ratioRooms = {
-          1: [1],
-          2: [1, 2],
-          3: [1, 2, 3],
-          100: [0]
-        };
 
-        for (var j = 0; j < CAPACITY.options.length; j++) {
-          var secondValue = parseInt(CAPACITY.options[j].value, 10);
+        [].forEach.call(CAPACITY.options, function (item) {
+          var secondValue = parseInt(item.value, 10);
 
-          for (var k = 0; k < ratioRooms[firstValue].length; k++) {
-            var ratioValue = ratioRooms[firstValue][k];
+          for (var k = 0; k < RATIO_ROOMS[firstValue].length; k++) {
+            var ratioValue = RATIO_ROOMS[firstValue][k];
             if (ratioValue === secondValue) {
-              CAPACITY.options[j].disabled = false;
+              item.disabled = false;
               break;
             }
-            CAPACITY.options[j].disabled = true;
+            item.disabled = true;
           }
-        }
+        });
         break;
       }
     }
