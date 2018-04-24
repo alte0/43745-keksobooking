@@ -28,6 +28,8 @@
   var MAP_CARD = TEMPLATE.querySelector('.map__card');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
   var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
+  var MAP_PIN_MAIN_WIDTH = 65;
+  var MAP_PIN_MAIN_HEIGHT = 80;
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
   var listAds;
@@ -362,8 +364,24 @@
         y: moveEvt.clientY,
       };
 
-      MAP_PIN_MAIN.style.top = (MAP_PIN_MAIN.offsetTop - shift.y) + 'px';
-      MAP_PIN_MAIN.style.left = (MAP_PIN_MAIN.offsetLeft - shift.x) + 'px';
+      var pinMainStyleTop = MAP_PIN_MAIN.offsetTop - shift.y;
+      if (pinMainStyleTop < 0) {
+        pinMainStyleTop = 0;
+      }
+      if (pinMainStyleTop > MAP_PINS.offsetHeight - MAP_PIN_MAIN_HEIGHT) {
+        pinMainStyleTop = MAP_PINS.offsetHeight - MAP_PIN_MAIN_HEIGHT;
+      }
+
+      var pinMainStyleLeft = MAP_PIN_MAIN.offsetLeft - shift.x;
+      if (pinMainStyleLeft < 0) {
+        pinMainStyleLeft = 0;
+      }
+      if (pinMainStyleLeft > MAP_PINS.offsetWidth - MAP_PIN_MAIN_WIDTH) {
+        pinMainStyleLeft = MAP_PINS.offsetWidth - MAP_PIN_MAIN_WIDTH;
+      }
+
+      MAP_PIN_MAIN.style.top = pinMainStyleTop + 'px';
+      MAP_PIN_MAIN.style.left = pinMainStyleLeft + 'px';
     };
 
     var onMouseUp = function () {
