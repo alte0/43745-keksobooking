@@ -28,6 +28,8 @@
   var MAP_CARD = TEMPLATE.querySelector('.map__card');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
   var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
+  var MAP_PIN_MAIN_WIDTH = 65;
+  var MAP_PIN_MAIN_HEIGHT = 80;
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
   var listAds;
@@ -37,6 +39,12 @@
   var TIME_OUT = document.querySelector('#timeout');
   var ROOM_NUMBER = document.querySelector('#room_number');
   var CAPACITY = document.querySelector('#capacity');
+  var RATIO_ROOMS = {
+    1: [1],
+    2: [1, 2],
+    3: [1, 2, 3],
+    100: [0]
+  };
 
   // перевод вида жилья
   var translateAdsType = function (obj, value) {
@@ -240,17 +248,6 @@
 
   };
 
-  var mouseupHandler = function () {
-    MAP.classList.remove('map--faded');
-    AD_FORM.classList.remove('ad-form--disabled');
-    INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
-    listAds = getAdsList(ADS_COUNT);
-    MAP_PINS.appendChild(renderPins(listAds));
-    MAP_PIN_MAIN.removeEventListener('mouseup', mouseupHandler);
-    MAP_PINS.addEventListener('click', pinClickHandler, true);
-    disabledEditAdForm(false);
-  };
-
   var disabledEditAdForm = function (bool) {
     var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
     elementsFieldset.forEach(function (item) {
@@ -289,25 +286,19 @@
 
       if (option.selected === true) {
         var firstValue = option.value;
-        var ratioRooms = {
-          1: [1],
-          2: [1, 2],
-          3: [1, 2, 3],
-          100: [0]
-        };
 
-        for (var j = 0; j < CAPACITY.options.length; j++) {
-          var secondValue = parseInt(CAPACITY.options[j].value, 10);
+        [].forEach.call(CAPACITY.options, function (item) {
+          var secondValue = parseInt(item.value, 10);
 
-          for (var k = 0; k < ratioRooms[firstValue].length; k++) {
-            var ratioValue = ratioRooms[firstValue][k];
+          for (var k = 0; k < RATIO_ROOMS[firstValue].length; k++) {
+            var ratioValue = RATIO_ROOMS[firstValue][k];
             if (ratioValue === secondValue) {
-              CAPACITY.options[j].disabled = false;
+              item.disabled = false;
               break;
             }
-            CAPACITY.options[j].disabled = true;
+            item.disabled = true;
           }
-        }
+        });
         break;
       }
     }
@@ -329,7 +320,6 @@
   };
   var validateCapacity = validateCapacityHandler;
 
-  MAP_PIN_MAIN.addEventListener('mouseup', mouseupHandler);
   disabledEditAdForm(true);
   minPrice();
   disabledNumberGuests();
@@ -341,5 +331,69 @@
   ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
   CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
+
+  MAP_PIN_MAIN.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    if (MAP.classList.contains('map--faded')) {
+      MAP.classList.remove('map--faded');
+      AD_FORM.classList.remove('ad-form--disabled');
+      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+      listAds = getAdsList(ADS_COUNT);
+      MAP_PINS.appendChild(renderPins(listAds));
+      MAP_PINS.addEventListener('click', pinClickHandler, true);
+      disabledEditAdForm(false);
+    }
+
+    // начальные координаты указателя мыши
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      // кординаты перемещения
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY,
+      };
+
+      var pinMainStyleTop = MAP_PIN_MAIN.offsetTop - shift.y;
+      if (pinMainStyleTop < 0) {
+        pinMainStyleTop = 0;
+      }
+      if (pinMainStyleTop > MAP_PINS.offsetHeight - MAP_PIN_MAIN_HEIGHT) {
+        pinMainStyleTop = MAP_PINS.offsetHeight - MAP_PIN_MAIN_HEIGHT;
+      }
+
+      var pinMainStyleLeft = MAP_PIN_MAIN.offsetLeft - shift.x;
+      if (pinMainStyleLeft < 0) {
+        pinMainStyleLeft = 0;
+      }
+      if (pinMainStyleLeft > MAP_PINS.offsetWidth - MAP_PIN_MAIN_WIDTH) {
+        pinMainStyleLeft = MAP_PINS.offsetWidth - MAP_PIN_MAIN_WIDTH;
+      }
+
+      MAP_PIN_MAIN.style.top = pinMainStyleTop + 'px';
+      MAP_PIN_MAIN.style.left = pinMainStyleLeft + 'px';
+    };
+
+    var onMouseUp = function () {
+      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  });
+
 
 })();
