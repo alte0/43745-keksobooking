@@ -382,6 +382,7 @@
 
       MAP_PIN_MAIN.style.top = pinMainStyleTop + 'px';
       MAP_PIN_MAIN.style.left = pinMainStyleLeft + 'px';
+      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
     };
 
     var onMouseUp = function () {
