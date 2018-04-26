@@ -42,47 +42,51 @@
     });
   };
 
-  window.data = {
-    getAdsList: function (count) {
-      var listAdsTemp = [];
-      var getRandomTitle;
+  var translateAdsType = function (obj, value) {
+    return obj[value];
+  };
 
-      getRandomTitle = elementGetter(ADS_TITLE);
+  var getAdsList = function (count) {
+    var listAdsTemp = [];
+    var getRandomTitle;
 
-      for (var i = 1; i <= count; i++) {
-        var locationX = getRandomNumber(X_PIN_MIN, X_PIN_MAX);
-        var locationY = getRandomNumber(Y_PIN_MIN, Y_PIN_MAX);
-        var result = locationX.toString() + ', ' + locationY.toString();
+    getRandomTitle = elementGetter(ADS_TITLE);
 
-        listAdsTemp.push({
-          'author': {
-            'avatar': 'img/avatars/user0' + i + '.png'
-          },
-          'offer': {
-            'title': getRandomTitle(),
-            'address': result,
-            'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
-            'type': ADS_TYPE[getRandomIndex(ADS_TYPE)],
-            'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
-            'guests': getRandomNumber(GUESTS_MIN, GUESTS_MAX),
-            'checkin': FIXED_TIME[getRandomIndex(FIXED_TIME)],
-            'checkout': FIXED_TIME[getRandomIndex(FIXED_TIME)],
-            'features': getRandomArrayElements(FEATURES_ADS).slice(0, getRandomIndex(FEATURES_ADS) + 1),
-            'description': '',
-            'photos': LIST_PHOTO
-          },
-          'location': {
-            'x': locationX,
-            'y': locationY
-          }
-        });
-      }
+    for (var i = 1; i <= count; i++) {
+      var locationX = getRandomNumber(X_PIN_MIN, X_PIN_MAX);
+      var locationY = getRandomNumber(Y_PIN_MIN, Y_PIN_MAX);
+      var result = locationX.toString() + ', ' + locationY.toString();
 
-      return listAdsTemp;
-    },
-    translateAdsType: function (obj, value) {
-      return obj[value];
+      listAdsTemp.push({
+        'author': {
+          'avatar': 'img/avatars/user0' + i + '.png'
+        },
+        'offer': {
+          'title': getRandomTitle(),
+          'address': result,
+          'price': getRandomNumber(PRICE_MIN, PRICE_MAX),
+          'type': ADS_TYPE[getRandomIndex(ADS_TYPE)],
+          'rooms': getRandomNumber(ROOMS_MIN, ROOMS_MAX),
+          'guests': getRandomNumber(GUESTS_MIN, GUESTS_MAX),
+          'checkin': FIXED_TIME[getRandomIndex(FIXED_TIME)],
+          'checkout': FIXED_TIME[getRandomIndex(FIXED_TIME)],
+          'features': getRandomArrayElements(FEATURES_ADS).slice(0, getRandomIndex(FEATURES_ADS) + 1),
+          'description': '',
+          'photos': LIST_PHOTO
+        },
+        'location': {
+          'x': locationX,
+          'y': locationY
+        }
+      });
     }
+
+    return listAdsTemp;
+  };
+
+  window.data = {
+    getAdsList: getAdsList,
+    translateAdsType: translateAdsType
   };
 
 })();

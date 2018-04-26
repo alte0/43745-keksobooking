@@ -45,29 +45,31 @@
     return fragment;
   };
 
-  window.card = {
-    renderAd: function (array, index) {
-      var element = MAP_CARD.cloneNode(true);
-      element.querySelector('.popup__title').textContent = array[index]['offer']['title'];
-      element.querySelector('.popup__text--address').textContent = array[index].offer.address;
-      element.querySelector('.popup__text--price').textContent = array[index].offer.price + '₽/ночь';
-      element.querySelector('.popup__type').textContent = window.data.translateAdsType(ADS_TYPE_RUS, array[index].offer.type);
-      element.querySelector('.popup__text--capacity').textContent = array[index].offer.rooms + ' комнаты для ' + array[index].offer.guests + ' гостей';
-      var ul = element.querySelector('.popup__features');
-      while (ul.firstChild) {
-        ul.removeChild(ul.firstChild);
-      }
-      ul.appendChild(renderFeatures(array[index].offer.features));
-      element.querySelector('.popup__description').textContent = array[index].offer.description;
-      var popupPhotos = element.querySelector('.popup__photos');
-      while (popupPhotos.firstChild) {
-        popupPhotos.removeChild(popupPhotos.firstChild);
-      }
-      popupPhotos.appendChild(renderPhotos(array[index].offer.photos));
-      element.querySelector('.popup__avatar').src = array[index].author.avatar;
-
-      return element;
+  var renderAd = function (array, index) {
+    var element = MAP_CARD.cloneNode(true);
+    element.querySelector('.popup__title').textContent = array[index]['offer']['title'];
+    element.querySelector('.popup__text--address').textContent = array[index].offer.address;
+    element.querySelector('.popup__text--price').textContent = array[index].offer.price + '₽/ночь';
+    element.querySelector('.popup__type').textContent = window.data.translateAdsType(ADS_TYPE_RUS, array[index].offer.type);
+    element.querySelector('.popup__text--capacity').textContent = array[index].offer.rooms + ' комнаты для ' + array[index].offer.guests + ' гостей';
+    var ul = element.querySelector('.popup__features');
+    while (ul.firstChild) {
+      ul.removeChild(ul.firstChild);
     }
+    ul.appendChild(renderFeatures(array[index].offer.features));
+    element.querySelector('.popup__description').textContent = array[index].offer.description;
+    var popupPhotos = element.querySelector('.popup__photos');
+    while (popupPhotos.firstChild) {
+      popupPhotos.removeChild(popupPhotos.firstChild);
+    }
+    popupPhotos.appendChild(renderPhotos(array[index].offer.photos));
+    element.querySelector('.popup__avatar').src = array[index].author.avatar;
+
+    return element;
+  };
+
+  window.card = {
+    renderAd: renderAd
   };
 
 })();

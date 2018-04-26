@@ -67,6 +67,13 @@
     disabledNumberGuests();
   };
 
+  var disabledEditAdForm = function (bool) {
+    var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
+    elementsFieldset.forEach(function (item) {
+      item.disabled = bool;
+    });
+  };
+
   var validateCapacityHandler = function () {
     for (var g = 0; g < CAPACITY.options.length; g++) {
       if (CAPACITY.options[g].selected === true && CAPACITY.options[g].disabled === true) {
@@ -92,12 +99,7 @@
 
 
   window.form = {
-    disabledEditAdForm: function (bool) {
-      var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
-      elementsFieldset.forEach(function (item) {
-        item.disabled = bool;
-      });
-    }
+    disabledEditAdForm: disabledEditAdForm
   };
 
 })();
