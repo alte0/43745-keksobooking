@@ -46,7 +46,7 @@
   };
 
   var onLoadSubmit = function (message) {
-    console.error(message);
+    console.log(message);
   };
 
   window.submitAd = function (element, url, success, error) {
@@ -57,6 +57,7 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('readystatechange', function () {
+      console.log(xhr.status);
 
       if (xhr.readyState !== 4) {
         return;
