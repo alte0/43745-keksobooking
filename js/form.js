@@ -15,6 +15,11 @@
     100: [0]
   };
   var AD_FORM = document.querySelector('.ad-form');
+  var MAP_PINS = document.querySelector('.map__pins');
+  var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
+  var MAP_PIN_MAIN_LEFT_COORDINATE = MAP_PIN_MAIN.style.left;
+  var MAP_PIN_MAIN_TOP_COORDINATE = MAP_PIN_MAIN.style.top;
+  var DIV_SUCCES = document.querySelector('.success');
 
   var minPrice = function () {
     var PRICE = document.querySelector('#price');
@@ -91,6 +96,20 @@
     window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onErrorSubmit);
   };
 
+  var successWorm = function () {
+    window.map.deleteElem('.map__card');
+    while (MAP_PINS.children.length > 2) {
+      MAP_PINS.removeChild(MAP_PINS.lastChild);
+    }
+    AD_FORM.reset();
+    MAP_PIN_MAIN.style.left = MAP_PIN_MAIN_LEFT_COORDINATE;
+    MAP_PIN_MAIN.style.top = MAP_PIN_MAIN_TOP_COORDINATE;
+    window.map.setValueAddress();
+    window.map.togglerMapAndForm();
+    disabledEditAdForm(true);
+    DIV_SUCCES.classList.toggle('hidden');
+  };
+
   minPrice();
   disabledNumberGuests();
 
@@ -105,7 +124,8 @@
 
 
   window.form = {
-    disabledEditAdForm: disabledEditAdForm
+    disabledEditAdForm: disabledEditAdForm,
+    successWorm: successWorm
   };
 
 })();

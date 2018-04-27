@@ -45,8 +45,8 @@
     console.error(message);
   };
 
-  var onLoadSubmit = function (message) {
-    console.log(message);
+  var onLoadSubmit = function () {
+    window.form.successWorm();
   };
 
   window.submitAd = function (element, url, success, error) {
@@ -57,14 +57,13 @@
     xhr.responseType = 'json';
 
     xhr.addEventListener('readystatechange', function () {
-      console.log(xhr.status);
 
       if (xhr.readyState !== 4) {
         return;
       }
 
       if (xhr.readyState === 4 && xhr.status === 200) {
-        success(xhr.response);
+        success();
       } else {
         error('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
       }
