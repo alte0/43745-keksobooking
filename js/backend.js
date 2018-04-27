@@ -56,9 +56,13 @@
 
     xhr.responseType = 'json';
 
-    xhr.addEventListener('load', function () {
+    xhr.addEventListener('readystatechange', function () {
 
-      if (xhr.status === 200) {
+      if (xhr.readyState !== 4) {
+        return;
+      }
+
+      if (xhr.readyState === 4 && xhr.status === 200) {
         success(xhr.response);
       } else {
         error('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);

@@ -55,7 +55,7 @@
       deleteElem('.map__card');
       document.removeEventListener('keydown', EscPopupClose);
     }
-  }
+  };
 
   var pinClickHandler = function (evt) {
     var target = evt.target;
