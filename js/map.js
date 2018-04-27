@@ -50,6 +50,13 @@
     }
   };
 
+  var EscPopupClose = function (evt) {
+    if (evt.keyCode === 27) {
+      deleteElem('.map__card');
+      document.removeEventListener('keydown', EscPopupClose);
+    }
+  }
+
   var pinClickHandler = function (evt) {
     var target = evt.target;
 
@@ -60,6 +67,7 @@
           deleteElem('.map__card');
           MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.backend.data, dataIndex), MAP_FILTERS_CONTAINER);
           document.addEventListener('click', clickPopupClose);
+          document.addEventListener('keydown', EscPopupClose);
         }
         return;
       }

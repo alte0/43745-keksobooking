@@ -14,6 +14,7 @@
     3: [1, 2, 3],
     100: [0]
   };
+  var AD_FORM = document.querySelector('.ad-form');
 
   var minPrice = function () {
     var PRICE = document.querySelector('#price');
@@ -85,6 +86,10 @@
     }
   };
   var validateCapacity = validateCapacityHandler;
+  var submitHandler = function (evt) {
+    evt.preventDefault();
+    window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onErrorSubmit);
+  };
 
   minPrice();
   disabledNumberGuests();
@@ -96,6 +101,7 @@
   ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
   CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
+  AD_FORM.addEventListener('submit', submitHandler);
 
 
   window.form = {
