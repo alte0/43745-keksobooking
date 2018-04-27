@@ -3,9 +3,26 @@
 (function () {
   var MAP_PINS = document.querySelector('.map__pins');
 
-  var onError = function (message) {
-    console.error(message);
+  var showMessage = function (message) {
+    var p = document.createElement('p');
+    p.textContent = message;
+    p.style.position = 'fixed';
+    p.style.left = 0;
+    p.style.right = 0;
+    p.style.backgroundColor = 'gray';
+    p.style.zIndex = 999;
+    p.style.color = 'red';
+    p.style.fontSize = '40px';
+    p.style.textAlign = 'center';
+
+    document.body.prepend(p);
+
+    setTimeout(function () {
+      p.parentNode.removeChild(p);
+    }, 5000);
   };
+
+  var onError = showMessage;
 
   var onLoad = function (data) {
     window.backend.data = data;
@@ -22,17 +39,17 @@
       if (xhr.status === 200) {
         success(xhr.response);
       } else {
-        error('Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText);
+        error('Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
 
     });
 
     xhr.addEventListener('error', function () {
-      console.log('Произошла ошибка соединения');
+      onError('Произошла ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      console.log('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.timeout = 3000;
@@ -40,13 +57,8 @@
     xhr.send();
   };
 
-
-  var onErrorSubmit = function (message) {
-    console.error(message);
-  };
-
   var onLoadSubmit = function () {
-    window.form.successWorm();
+    window.form.successForm();
   };
 
   window.submitAd = function (element, url, success, error) {
@@ -71,11 +83,11 @@
     });
 
     xhr.addEventListener('error', function () {
-      console.log('Произошла ошибка соединения');
+      onError('Произошла ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      console.log('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     xhr.timeout = 3000;
@@ -87,7 +99,6 @@
   window.backend = {
     onError: onError,
     onLoad: onLoad,
-    onErrorSubmit: onErrorSubmit,
     onLoadSubmit: onLoadSubmit,
   };
 

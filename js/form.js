@@ -93,10 +93,10 @@
   var validateCapacity = validateCapacityHandler;
   var submitHandler = function (evt) {
     evt.preventDefault();
-    window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onErrorSubmit);
+    window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onError);
   };
 
-  var successWorm = function () {
+  var successForm = function () {
     window.map.deleteElem('.map__card');
     while (MAP_PINS.children.length > 2) {
       MAP_PINS.removeChild(MAP_PINS.lastChild);
@@ -125,7 +125,7 @@
 
   window.form = {
     disabledEditAdForm: disabledEditAdForm,
-    successWorm: successWorm
+    successWorm: successForm
   };
 
 })();
