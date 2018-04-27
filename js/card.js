@@ -47,7 +47,7 @@
 
   var renderAd = function (array, index) {
     var element = MAP_CARD.cloneNode(true);
-    element.querySelector('.popup__title').textContent = array[index]['offer']['title'];
+    element.querySelector('.popup__title').textContent = array[index].offer.title;
     element.querySelector('.popup__text--address').textContent = array[index].offer.address;
     element.querySelector('.popup__text--price').textContent = array[index].offer.price + '₽/ночь';
     element.querySelector('.popup__type').textContent = window.data.translateAdsType(ADS_TYPE_RUS, array[index].offer.type);

@@ -2,7 +2,7 @@
 
 (function () {
 
-  var ADS_COUNT = 8;
+  // var ADS_COUNT = 8;
   var MAP = document.querySelector('.map');
   var MAP_PINS = document.querySelector('.map__pins');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
@@ -11,7 +11,7 @@
   var MAP_PIN_MAIN_HEIGHT = 80;
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
-  var listAds;
+  // var listAds;
 
   // метки
   var renderPins = function (pins) {
@@ -58,7 +58,7 @@
         var dataIndex = target.dataset.index;
         if (dataIndex) {
           deleteElem('.map__card');
-          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(listAds, dataIndex), MAP_FILTERS_CONTAINER);
+          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.backend.data, dataIndex), MAP_FILTERS_CONTAINER);
           document.addEventListener('click', clickPopupClose);
         }
         return;
@@ -77,8 +77,9 @@
       MAP.classList.remove('map--faded');
       AD_FORM.classList.remove('ad-form--disabled');
       INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
-      listAds = window.data.getAdsList(ADS_COUNT);
-      MAP_PINS.appendChild(renderPins(listAds));
+      // listAds = window.data.getAdsList(ADS_COUNT);
+      window.load('https://js.dump.academy/keksobooking/data', window.backend.onLoad, window.backend.onError);
+      // MAP_PINS.appendChild(renderPins(listAds));
       MAP_PINS.addEventListener('click', pinClickHandler, true);
       window.form.disabledEditAdForm(false);
     }
@@ -133,6 +134,10 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.map = {
+    renderPins: renderPins
+  };
 
 
 })();
