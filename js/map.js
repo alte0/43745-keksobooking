@@ -65,7 +65,7 @@
         var dataIndex = target.dataset.index;
         if (dataIndex) {
           deleteElem('.map__card');
-          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.backend.data, dataIndex), MAP_FILTERS_CONTAINER);
+          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncoming, dataIndex), MAP_FILTERS_CONTAINER);
           document.addEventListener('click', clickPopupClose);
           document.addEventListener('keydown', EscPopupClose);
         }
