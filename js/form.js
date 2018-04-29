@@ -122,10 +122,9 @@
   validateCapacity();
   AD_FORM.addEventListener('submit', submitHandler);
 
-
   window.form = {
     disabledEditAdForm: disabledEditAdForm,
-    successWorm: successForm
+    successForm: successForm
   };
 
 })();
