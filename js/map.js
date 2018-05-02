@@ -2,7 +2,7 @@
 
 (function () {
 
-  var ADS_COUNT = 8;
+  // var ADS_COUNT = 8;
   var MAP = document.querySelector('.map');
   var MAP_PINS = document.querySelector('.map__pins');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
@@ -11,7 +11,7 @@
   var MAP_PIN_MAIN_HEIGHT = 80;
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
-  var listAds;
+  // var listAds;
 
   // метки
   var renderPins = function (pins) {
@@ -50,6 +50,13 @@
     }
   };
 
+  var EscPopupClose = function (evt) {
+    if (evt.keyCode === 27) {
+      deleteElem('.map__card');
+      document.removeEventListener('keydown', EscPopupClose);
+    }
+  };
+
   var pinClickHandler = function (evt) {
     var target = evt.target;
 
@@ -58,8 +65,9 @@
         var dataIndex = target.dataset.index;
         if (dataIndex) {
           deleteElem('.map__card');
-          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(listAds, dataIndex), MAP_FILTERS_CONTAINER);
+          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncoming, dataIndex), MAP_FILTERS_CONTAINER);
           document.addEventListener('click', clickPopupClose);
+          document.addEventListener('keydown', EscPopupClose);
         }
         return;
       }
@@ -70,15 +78,22 @@
 
   window.form.disabledEditAdForm(true);
 
+  var togglerMapAndForm = function () {
+    MAP.classList.toggle('map--faded');
+    AD_FORM.classList.toggle('ad-form--disabled');
+  };
+
+  var setValueAddress = function () {
+    INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+  };
+
   MAP_PIN_MAIN.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     if (MAP.classList.contains('map--faded')) {
-      MAP.classList.remove('map--faded');
-      AD_FORM.classList.remove('ad-form--disabled');
-      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
-      listAds = window.data.getAdsList(ADS_COUNT);
-      MAP_PINS.appendChild(renderPins(listAds));
+      togglerMapAndForm();
+      setValueAddress();
+      window.load('https://js.dump.academy/keksobooking/data', window.backend.onLoad, window.backend.onError);
       MAP_PINS.addEventListener('click', pinClickHandler, true);
       window.form.disabledEditAdForm(false);
     }
@@ -120,11 +135,11 @@
 
       MAP_PIN_MAIN.style.top = pinMainStyleTop + 'px';
       MAP_PIN_MAIN.style.left = pinMainStyleLeft + 'px';
-      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+      setValueAddress();
     };
 
     var onMouseUp = function () {
-      INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
+      setValueAddress();
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
@@ -133,6 +148,13 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.map = {
+    renderPins: renderPins,
+    togglerMapAndForm: togglerMapAndForm,
+    deleteElem: deleteElem,
+    setValueAddress: setValueAddress
+  };
 
 
 })();

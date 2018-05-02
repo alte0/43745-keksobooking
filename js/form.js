@@ -14,6 +14,12 @@
     3: [1, 2, 3],
     100: [0]
   };
+  var AD_FORM = document.querySelector('.ad-form');
+  var MAP_PINS = document.querySelector('.map__pins');
+  var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
+  var MAP_PIN_MAIN_LEFT_COORDINATE = MAP_PIN_MAIN.style.left;
+  var MAP_PIN_MAIN_TOP_COORDINATE = MAP_PIN_MAIN.style.top;
+  var DIV_SUCCES = document.querySelector('.success');
 
   var minPrice = function () {
     var PRICE = document.querySelector('#price');
@@ -67,6 +73,13 @@
     disabledNumberGuests();
   };
 
+  var disabledEditAdForm = function (bool) {
+    var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
+    elementsFieldset.forEach(function (item) {
+      item.disabled = bool;
+    });
+  };
+
   var validateCapacityHandler = function () {
     for (var g = 0; g < CAPACITY.options.length; g++) {
       if (CAPACITY.options[g].selected === true && CAPACITY.options[g].disabled === true) {
@@ -78,6 +91,24 @@
     }
   };
   var validateCapacity = validateCapacityHandler;
+  var submitHandler = function (evt) {
+    evt.preventDefault();
+    window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onError);
+  };
+
+  var successForm = function () {
+    window.map.deleteElem('.map__card');
+    while (MAP_PINS.children.length > 2) {
+      MAP_PINS.removeChild(MAP_PINS.lastChild);
+    }
+    AD_FORM.reset();
+    MAP_PIN_MAIN.style.left = MAP_PIN_MAIN_LEFT_COORDINATE;
+    MAP_PIN_MAIN.style.top = MAP_PIN_MAIN_TOP_COORDINATE;
+    window.map.setValueAddress();
+    window.map.togglerMapAndForm();
+    disabledEditAdForm(true);
+    DIV_SUCCES.classList.toggle('hidden');
+  };
 
   minPrice();
   disabledNumberGuests();
@@ -89,15 +120,11 @@
   ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
   CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
-
+  AD_FORM.addEventListener('submit', submitHandler);
 
   window.form = {
-    disabledEditAdForm: function (bool) {
-      var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
-      elementsFieldset.forEach(function (item) {
-        item.disabled = bool;
-      });
-    }
+    disabledEditAdForm: disabledEditAdForm,
+    successForm: successForm
   };
 
 })();
