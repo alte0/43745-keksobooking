@@ -97,15 +97,23 @@
     window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onError);
   };
 
-  var successForm = function () {
+  var noActivePage = function () {
     window.map.deleteElem('.map__card');
     window.map.deletePins();
-    AD_FORM.reset();
     MAP_PIN_MAIN.style.left = MAP_PIN_MAIN_LEFT_COORDINATE;
     MAP_PIN_MAIN.style.top = MAP_PIN_MAIN_TOP_COORDINATE;
     window.map.setValueAddress();
     window.map.togglerMapAndForm();
     disabledEditAdForm(true);
+  };
+
+  var resetHandler = function () {
+    noActivePage();
+  };
+
+  var successForm = function () {
+    AD_FORM.reset();
+    noActivePage();
     DIV_SUCCES.classList.toggle('hidden');
   };
 
@@ -190,6 +198,7 @@
   CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
   AD_FORM.addEventListener('submit', submitHandler);
+  AD_FORM.addEventListener('reset', resetHandler);
   MAP_FILTERS.addEventListener('change', formFiltersOnChange);
 
 
