@@ -17,7 +17,10 @@
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < pins.length; i++) {
+      if (i === 5) {
+        break;
+      }
       fragment.appendChild(window.pin.renderPin(pins[i], i));
     }
 
@@ -87,6 +90,12 @@
     INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
   };
 
+  var deletePins = function () {
+    while (MAP_PINS.children.length > 2) {
+      MAP_PINS.removeChild(MAP_PINS.lastChild);
+    }
+  };
+
   MAP_PIN_MAIN.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
@@ -153,7 +162,8 @@
     renderPins: renderPins,
     togglerMapAndForm: togglerMapAndForm,
     deleteElem: deleteElem,
-    setValueAddress: setValueAddress
+    setValueAddress: setValueAddress,
+    deletePins: deletePins
   };
 
 

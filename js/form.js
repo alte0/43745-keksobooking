@@ -99,9 +99,7 @@
 
   var successForm = function () {
     window.map.deleteElem('.map__card');
-    while (MAP_PINS.children.length > 2) {
-      MAP_PINS.removeChild(MAP_PINS.lastChild);
-    }
+    window.map.deletePins();
     AD_FORM.reset();
     MAP_PIN_MAIN.style.left = MAP_PIN_MAIN_LEFT_COORDINATE;
     MAP_PIN_MAIN.style.top = MAP_PIN_MAIN_TOP_COORDINATE;
@@ -169,9 +167,7 @@
     };
 
     window.data.dataIncomingCopy = window.data.dataIncoming.filter(filtersHousingType).filter(filtersHousingPrice).filter(filtersHousingRooms).filter(filtersHousingGuests).filter(filtersFeatures);
-    while (MAP_PINS.children.length > 2) {
-      MAP_PINS.removeChild(MAP_PINS.lastChild);
-    }
+    window.map.deletePins();
     MAP_PINS.appendChild(window.map.renderPins(window.data.dataIncomingCopy));
   };
 
