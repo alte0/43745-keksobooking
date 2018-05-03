@@ -45,25 +45,26 @@
     return fragment;
   };
 
-  var renderAd = function (array, index) {
+  var renderAd = function (elArray) {
+    window.map.deleteElem('.map__card');
     var element = MAP_CARD.cloneNode(true);
-    element.querySelector('.popup__title').textContent = array[index].offer.title;
-    element.querySelector('.popup__text--address').textContent = array[index].offer.address;
-    element.querySelector('.popup__text--price').textContent = array[index].offer.price + '₽/ночь';
-    element.querySelector('.popup__type').textContent = window.data.translateAdsType(ADS_TYPE_RUS, array[index].offer.type);
-    element.querySelector('.popup__text--capacity').textContent = array[index].offer.rooms + ' комнаты для ' + array[index].offer.guests + ' гостей';
+    element.querySelector('.popup__title').textContent = elArray.offer.title;
+    element.querySelector('.popup__text--address').textContent = elArray.offer.address;
+    element.querySelector('.popup__text--price').textContent = elArray.offer.price + '₽/ночь';
+    element.querySelector('.popup__type').textContent = window.data.translateAdsType(ADS_TYPE_RUS, elArray.offer.type);
+    element.querySelector('.popup__text--capacity').textContent = elArray.offer.rooms + ' комнаты для ' + elArray.offer.guests + ' гостей';
     var ul = element.querySelector('.popup__features');
     while (ul.firstChild) {
       ul.removeChild(ul.firstChild);
     }
-    ul.appendChild(renderFeatures(array[index].offer.features));
-    element.querySelector('.popup__description').textContent = array[index].offer.description;
+    ul.appendChild(renderFeatures(elArray.offer.features));
+    element.querySelector('.popup__description').textContent = elArray.offer.description;
     var popupPhotos = element.querySelector('.popup__photos');
     while (popupPhotos.firstChild) {
       popupPhotos.removeChild(popupPhotos.firstChild);
     }
-    popupPhotos.appendChild(renderPhotos(array[index].offer.photos));
-    element.querySelector('.popup__avatar').src = array[index].author.avatar;
+    popupPhotos.appendChild(renderPhotos(elArray.offer.photos));
+    element.querySelector('.popup__avatar').src = elArray.author.avatar;
 
     return element;
   };
