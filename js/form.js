@@ -166,9 +166,16 @@
       return isfeatures;
     };
 
-    window.data.dataIncomingCopy = window.data.dataIncoming.filter(filtersHousingType).filter(filtersHousingPrice).filter(filtersHousingRooms).filter(filtersHousingGuests).filter(filtersFeatures);
-    window.map.deletePins();
-    MAP_PINS.appendChild(window.map.renderPins(window.data.dataIncomingCopy));
+    var isFilters = function () {
+      window.data.dataIncomingCopy = window.data.dataIncoming.filter(filtersHousingType).filter(filtersHousingPrice).filter(filtersHousingRooms).filter(filtersHousingGuests).filter(filtersFeatures);
+      window.map.deletePins();
+      MAP_PINS.appendChild(window.map.renderPins(window.data.dataIncomingCopy));
+    };
+
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    var timerId = setTimeout(isFilters, 500);
   };
 
   minPrice();
