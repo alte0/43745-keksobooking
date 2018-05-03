@@ -17,9 +17,9 @@
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
 
-    pins.forEach(function (item, i) {
-      fragment.appendChild(window.pin.renderPin(item, i));
-    });
+    for (var i = 0; i < 5; i++) {
+      fragment.appendChild(window.pin.renderPin(pins[i], i));
+    }
 
     return fragment;
   };
@@ -65,7 +65,7 @@
         var dataIndex = target.dataset.index;
         if (dataIndex) {
           deleteElem('.map__card');
-          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncoming, dataIndex), MAP_FILTERS_CONTAINER);
+          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncomingCopy ? window.data.dataIncomingCopy : window.data.dataIncoming, dataIndex), MAP_FILTERS_CONTAINER);
           document.addEventListener('click', clickPopupClose);
           document.addEventListener('keydown', EscPopupClose);
         }
