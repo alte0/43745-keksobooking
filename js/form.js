@@ -167,6 +167,7 @@
     };
 
     var isFilters = function () {
+      window.map.deleteElem('.map__card');
       window.data.dataIncomingCopy = window.data.dataIncoming.filter(filtersHousingType).filter(filtersHousingPrice).filter(filtersHousingRooms).filter(filtersHousingGuests).filter(filtersFeatures);
       window.map.deletePins();
       MAP_PINS.appendChild(window.map.renderPins(window.data.dataIncomingCopy));
