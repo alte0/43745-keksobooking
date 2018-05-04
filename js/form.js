@@ -141,6 +141,7 @@
     var filtersPins = {};
     var SELECTS = evt.currentTarget.querySelectorAll('.map__filter');
     var FEATURES = evt.currentTarget.querySelectorAll('[name=features]');
+    var delay = 500;
 
     SELECTS.forEach(function (item) {
       if (item.value !== 'any') {
@@ -222,7 +223,7 @@
     if (timerId) {
       clearTimeout(timerId);
     }
-    var timerId = setTimeout(isFilters, 500);
+    var timerId = setTimeout(isFilters, delay);
   };
 
   var addEventListeners = function () {
