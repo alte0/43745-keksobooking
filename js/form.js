@@ -142,17 +142,17 @@
     var SELECTS = evt.currentTarget.querySelectorAll('.map__filter');
     var FEATURES = evt.currentTarget.querySelectorAll('[name=features]');
 
-    for (var i = 0; i < SELECTS.length; i++) {
-      if (SELECTS[i].value !== 'any') {
-        filtersPins[SELECTS[i].name] = SELECTS[i].value;
+    SELECTS.forEach(function (item) {
+      if (item.value !== 'any') {
+        filtersPins[item.name] = item.value;
       }
-    }
+    });
     filtersPins.FEATURES = [];
-    for (var j = 0; j < FEATURES.length; j++) {
-      if (FEATURES[j].checked) {
-        filtersPins.FEATURES.push(FEATURES[j].value);
+    FEATURES.forEach(function (item) {
+      if (item.checked) {
+        filtersPins.FEATURES.push(item.value);
       }
-    }
+    });
 
     var filtersHousingType = function (item, index, array) {
       return filtersPins['housing-type'] ? filtersPins['housing-type'] === array[index].offer.type : true;
@@ -160,17 +160,22 @@
 
     var filtersHousingPrice = function (item, index, array) {
       var valuePrice = true;
+      var minHousingPrice = 0;
+      var middleHousingPrice = 10000;
+      var maxHousingPrice = 50000;
+
       switch (filtersPins['housing-price']) {
         case 'low':
-          valuePrice = array[index].offer.price > 0 && array[index].offer.price < 10000;
+          valuePrice = array[index].offer.price > minHousingPrice && array[index].offer.price < middleHousingPrice;
           break;
         case 'middle':
-          valuePrice = array[index].offer.price >= 10000 && array[index].offer.price <= 50000;
+          valuePrice = array[index].offer.price >= middleHousingPrice && array[index].offer.price <= maxHousingPrice;
           break;
         case 'high':
-          valuePrice = array[index].offer.price > 50000;
+          valuePrice = array[index].offer.price > maxHousingPrice;
           break;
       }
+
       return valuePrice;
     };
 
@@ -184,14 +189,26 @@
 
     var filtersFeatures = function (item, index, array) {
       var isfeatures;
+      var counter = 0;
+
       if (filtersPins.FEATURES.length > 0) {
+
         for (var k = 0; k < array.length; k++) {
-          isfeatures = array[index].offer.features.indexOf(filtersPins.FEATURES[k]) >= 0;
-          break;
+          array[index].offer.features.forEach(function (itemFeature) {
+            if (filtersPins.FEATURES[k] === itemFeature) {
+              counter++;
+            }
+          });
         }
+
+        if (counter === filtersPins.FEATURES.length) {
+          isfeatures = array[index];
+        }
+
       } else {
         isfeatures = true;
       }
+
       return isfeatures;
     };
 
@@ -208,19 +225,22 @@
     var timerId = setTimeout(isFilters, 500);
   };
 
+  var addEventListeners = function () {
+    TYPE.addEventListener('change', typeChangeHandler);
+    TIME_IN.addEventListener('change', timeInChangeHandler);
+    TIME_OUT.addEventListener('change', timeOutChangeHandler);
+    ROOM_NUMBER.addEventListener('change', roomChangeHandler);
+    ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
+    CAPACITY.addEventListener('change', validateCapacityHandler);
+    AD_FORM.addEventListener('submit', submitHandler);
+    MAP_FILTERS.addEventListener('change', formFiltersOnChange);
+    AD_FORM_RESET.addEventListener('click', resetHandler);
+  };
+
   minPrice();
   disabledNumberGuests();
-
-  TYPE.addEventListener('change', typeChangeHandler);
-  TIME_IN.addEventListener('change', timeInChangeHandler);
-  TIME_OUT.addEventListener('change', timeOutChangeHandler);
-  ROOM_NUMBER.addEventListener('change', roomChangeHandler);
-  ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
-  CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
-  AD_FORM.addEventListener('submit', submitHandler);
-  MAP_FILTERS.addEventListener('change', formFiltersOnChange);
-  AD_FORM_RESET.addEventListener('click', resetHandler);
+  addEventListeners();
 
   window.form = {
     disabledEditAdForm: disabledEditAdForm,
