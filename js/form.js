@@ -15,11 +15,14 @@
     100: [0]
   };
   var AD_FORM = document.querySelector('.ad-form');
+  var MAP = document.querySelector('.map');
   var MAP_PINS = document.querySelector('.map__pins');
   var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
   var MAP_PIN_MAIN_LEFT_COORDINATE = MAP_PIN_MAIN.style.left;
   var MAP_PIN_MAIN_TOP_COORDINATE = MAP_PIN_MAIN.style.top;
   var DIV_SUCCES = document.querySelector('.success');
+  var MAP_FILTERS = document.querySelector('.map__filters');
+  var AD_FORM_RESET = document.querySelector('.ad-form__reset');
 
   var minPrice = function () {
     var PRICE = document.querySelector('#price');
@@ -90,41 +93,163 @@
       }
     }
   };
+
   var validateCapacity = validateCapacityHandler;
+
   var submitHandler = function (evt) {
     evt.preventDefault();
-    window.submitAd(evt.target, 'https://js.dump.academy/keksobooking', window.backend.onLoadSubmit, window.backend.onError);
+    var formData = new FormData(evt.target);
+    window.backend.submitAd(formData, 'https://js.dump.academy/keksobooking', successForm, window.backend.onError);
   };
 
-  var successForm = function () {
+  var onLoad = function (data) {
+    window.data.dataIncoming = data;
+    MAP_PINS.appendChild(window.map.renderPins(data));
+  };
+
+  var noActiveMapAndForm = function () {
     window.map.deleteElem('.map__card');
-    while (MAP_PINS.children.length > 2) {
-      MAP_PINS.removeChild(MAP_PINS.lastChild);
-    }
-    AD_FORM.reset();
+    window.map.deletePins();
     MAP_PIN_MAIN.style.left = MAP_PIN_MAIN_LEFT_COORDINATE;
     MAP_PIN_MAIN.style.top = MAP_PIN_MAIN_TOP_COORDINATE;
     window.map.setValueAddress();
     window.map.togglerMapAndForm();
     disabledEditAdForm(true);
+  };
+
+  var activeMapAndForm = function () {
+    if (MAP.classList.contains('map--faded')) {
+      window.map.togglerMapAndForm();
+      window.map.setValueAddress();
+      window.backend.load('https://js.dump.academy/keksobooking/data', onLoad, window.backend.onError);
+      MAP_PINS.addEventListener('click', window.map.pinClickHandler, true);
+      disabledEditAdForm(false);
+    }
+  };
+
+  var resetHandler = function () {
+    noActiveMapAndForm();
+  };
+
+  var successForm = function () {
+    AD_FORM.reset();
+    noActiveMapAndForm();
     DIV_SUCCES.classList.toggle('hidden');
+  };
+
+  var formFiltersOnChange = function (evt) {
+    var filtersPins = {};
+    var SELECTS = evt.currentTarget.querySelectorAll('.map__filter');
+    var FEATURES = evt.currentTarget.querySelectorAll('[name=features]');
+    var DELAY = 500;
+
+    SELECTS.forEach(function (item) {
+      if (item.value !== 'any') {
+        filtersPins[item.name] = item.value;
+      }
+    });
+    filtersPins.FEATURES = [];
+    FEATURES.forEach(function (item) {
+      if (item.checked) {
+        filtersPins.FEATURES.push(item.value);
+      }
+    });
+
+    var filtersHousingType = function (item, index, array) {
+      return filtersPins['housing-type'] ? filtersPins['housing-type'] === array[index].offer.type : true;
+    };
+
+    var filtersHousingPrice = function (item, index, array) {
+      var valuePrice = true;
+      var minHousingPrice = 0;
+      var middleHousingPrice = 10000;
+      var maxHousingPrice = 50000;
+
+      switch (filtersPins['housing-price']) {
+        case 'low':
+          valuePrice = array[index].offer.price > minHousingPrice && array[index].offer.price < middleHousingPrice;
+          break;
+        case 'middle':
+          valuePrice = array[index].offer.price >= middleHousingPrice && array[index].offer.price <= maxHousingPrice;
+          break;
+        case 'high':
+          valuePrice = array[index].offer.price > maxHousingPrice;
+          break;
+      }
+
+      return valuePrice;
+    };
+
+    var filtersHousingRooms = function (item, index, array) {
+      return filtersPins['housing-rooms'] ? parseInt(filtersPins['housing-rooms'], 10) === array[index].offer.rooms : true;
+    };
+
+    var filtersHousingGuests = function (item, index, array) {
+      return filtersPins['housing-guests'] ? parseInt(filtersPins['housing-guests'], 10) === array[index].offer.guests : true;
+    };
+
+    var filtersFeatures = function (item, index, array) {
+      var isfeatures;
+      var counter = 0;
+
+      if (filtersPins.FEATURES.length > 0) {
+
+        for (var k = 0; k < array.length; k++) {
+          array[index].offer.features.forEach(function (itemFeature) {
+            if (filtersPins.FEATURES[k] === itemFeature) {
+              counter++;
+            }
+          });
+        }
+
+        if (counter === filtersPins.FEATURES.length) {
+          isfeatures = array[index];
+        }
+
+      } else {
+        isfeatures = true;
+      }
+
+      return isfeatures;
+    };
+
+    var filterAd = function (item, i, array) {
+      return filtersHousingType(item, i, array) && filtersHousingPrice(item, i, array) && filtersHousingRooms(item, i, array) && filtersHousingGuests(item, i, array) && filtersFeatures(item, i, array) ? true : false;
+    };
+
+    var isFilters = function () {
+      window.map.deleteElem('.map__card');
+      window.data.dataIncomingCopy = window.data.dataIncoming.filter(filterAd);
+      window.map.deletePins();
+      MAP_PINS.appendChild(window.map.renderPins(window.data.dataIncomingCopy));
+    };
+
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    var timerId = setTimeout(isFilters, DELAY);
+  };
+
+  var addEventListeners = function () {
+    TYPE.addEventListener('change', typeChangeHandler);
+    TIME_IN.addEventListener('change', timeInChangeHandler);
+    TIME_OUT.addEventListener('change', timeOutChangeHandler);
+    ROOM_NUMBER.addEventListener('change', roomChangeHandler);
+    ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
+    CAPACITY.addEventListener('change', validateCapacityHandler);
+    AD_FORM.addEventListener('submit', submitHandler);
+    MAP_FILTERS.addEventListener('change', formFiltersOnChange);
+    AD_FORM_RESET.addEventListener('click', resetHandler);
   };
 
   minPrice();
   disabledNumberGuests();
-
-  TYPE.addEventListener('change', typeChangeHandler);
-  TIME_IN.addEventListener('change', timeInChangeHandler);
-  TIME_OUT.addEventListener('change', timeOutChangeHandler);
-  ROOM_NUMBER.addEventListener('change', roomChangeHandler);
-  ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
-  CAPACITY.addEventListener('change', validateCapacityHandler);
   validateCapacity();
-  AD_FORM.addEventListener('submit', submitHandler);
+  addEventListeners();
 
   window.form = {
     disabledEditAdForm: disabledEditAdForm,
-    successForm: successForm
+    activeMapAndForm: activeMapAndForm
   };
 
 })();

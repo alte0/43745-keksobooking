@@ -1,16 +1,10 @@
 'use strict';
 
 (function () {
-  var MAP_PINS = document.querySelector('.map__pins');
 
   var onError = window.message.showMessage;
 
-  var onLoad = function (data) {
-    window.data.dataIncoming = data;
-    MAP_PINS.appendChild(window.map.renderPins(data));
-  };
-
-  window.load = function (url, success, error) {
+  var load = function (url, success, error) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -38,12 +32,7 @@
     xhr.send();
   };
 
-  var onLoadSubmit = function () {
-    window.form.successForm();
-  };
-
-  window.submitAd = function (element, url, success, error) {
-    var formData = new FormData(element);
+  var submitAd = function (formData, url, success, error) {
 
     var xhr = new XMLHttpRequest();
 
@@ -76,11 +65,10 @@
     xhr.send(formData);
   };
 
-
   window.backend = {
-    onError: onError,
-    onLoad: onLoad,
-    onLoadSubmit: onLoadSubmit,
+    load: load,
+    submitAd: submitAd,
+    onError: onError
   };
 
 })();

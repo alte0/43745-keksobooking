@@ -2,7 +2,6 @@
 
 (function () {
 
-  // var ADS_COUNT = 8;
   var MAP = document.querySelector('.map');
   var MAP_PINS = document.querySelector('.map__pins');
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
@@ -11,15 +10,17 @@
   var MAP_PIN_MAIN_HEIGHT = 80;
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
-  // var listAds;
 
   // метки
   var renderPins = function (pins) {
     var fragment = document.createDocumentFragment();
 
-    pins.forEach(function (item, i) {
-      fragment.appendChild(window.pin.renderPin(item, i));
-    });
+    for (var i = 0; i < pins.length; i++) {
+      if (i === 5) {
+        break;
+      }
+      fragment.appendChild(window.pin.renderPin(pins[i], i));
+    }
 
     return fragment;
   };
@@ -64,8 +65,7 @@
       if (target.tagName === 'BUTTON') {
         var dataIndex = target.dataset.index;
         if (dataIndex) {
-          deleteElem('.map__card');
-          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncoming, dataIndex), MAP_FILTERS_CONTAINER);
+          MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncomingCopy ? window.data.dataIncomingCopy[dataIndex] : window.data.dataIncoming[dataIndex]), MAP_FILTERS_CONTAINER);
           document.addEventListener('click', clickPopupClose);
           document.addEventListener('keydown', EscPopupClose);
         }
@@ -87,16 +87,16 @@
     INPUT_ADDRESS.value = getCoordinatePin(MAP_PIN_MAIN);
   };
 
+  var deletePins = function () {
+    while (MAP_PINS.children.length > 2) {
+      MAP_PINS.removeChild(MAP_PINS.lastChild);
+    }
+  };
+
   MAP_PIN_MAIN.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    if (MAP.classList.contains('map--faded')) {
-      togglerMapAndForm();
-      setValueAddress();
-      window.load('https://js.dump.academy/keksobooking/data', window.backend.onLoad, window.backend.onError);
-      MAP_PINS.addEventListener('click', pinClickHandler, true);
-      window.form.disabledEditAdForm(false);
-    }
+    window.form.activeMapAndForm();
 
     // начальные координаты указателя мыши
     var startCoords = {
@@ -153,7 +153,9 @@
     renderPins: renderPins,
     togglerMapAndForm: togglerMapAndForm,
     deleteElem: deleteElem,
-    setValueAddress: setValueAddress
+    setValueAddress: setValueAddress,
+    deletePins: deletePins,
+    pinClickHandler: pinClickHandler
   };
 
 
