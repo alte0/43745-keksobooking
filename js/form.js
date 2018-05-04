@@ -213,9 +213,13 @@
       return isfeatures;
     };
 
+    var filterAd = function (item, i, array) {
+      return filtersHousingType(item, i, array) && filtersHousingPrice(item, i, array) && filtersHousingRooms(item, i, array) && filtersHousingGuests(item, i, array) && filtersFeatures(item, i, array) ? true : false;
+    };
+
     var isFilters = function () {
       window.map.deleteElem('.map__card');
-      window.data.dataIncomingCopy = window.data.dataIncoming.filter(filtersHousingType).filter(filtersHousingPrice).filter(filtersHousingRooms).filter(filtersHousingGuests).filter(filtersFeatures);
+      window.data.dataIncomingCopy = window.data.dataIncoming.filter(filterAd);
       window.map.deletePins();
       MAP_PINS.appendChild(window.map.renderPins(window.data.dataIncomingCopy));
     };
