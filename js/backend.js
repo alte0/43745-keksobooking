@@ -4,7 +4,7 @@
 
   var onError = window.message.showMessage;
 
-  var load = function (url, success, error) {
+  var loadData = function (url, success, error) {
     var xhr = new XMLHttpRequest();
 
     xhr.responseType = 'json';
@@ -66,7 +66,7 @@
   };
 
   window.backend = {
-    load: load,
+    loadData: loadData,
     submitAd: submitAd,
     onError: onError
   };
