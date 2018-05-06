@@ -7,9 +7,11 @@
   var MAP_FILTERS_CONTAINER = document.querySelector('.map__filters-container');
   var MAP_PIN_MAIN = document.querySelector('.map__pin--main');
   var MAP_PIN_MAIN_WIDTH = 65;
-  var MAP_PIN_MAIN_HEIGHT = 80;
   var AD_FORM = document.querySelector('.ad-form');
   var INPUT_ADDRESS = document.querySelector('#address');
+  var ESC_CODE = 27;
+  var MIN_TOP_STYLE_PIN_MAIN = 150;
+  var MAX_TOP_STYLE_PIN_MAIN = 500;
 
   // метки
   var renderPins = function (pins) {
@@ -43,18 +45,18 @@
     return;
   };
 
-  var clickPopupClose = function (evt) {
+  var popupCloseClickHandler = function (evt) {
     var target = evt.target;
     if (target.classList.contains('popup__close')) {
       deleteElem('.map__card');
-      document.removeEventListener('click', clickPopupClose);
+      document.removeEventListener('click', popupCloseClickHandler);
     }
   };
 
-  var EscPopupClose = function (evt) {
-    if (evt.keyCode === 27) {
+  var popupCloseEscHandler = function (evt) {
+    if (evt.keyCode === ESC_CODE) {
       deleteElem('.map__card');
-      document.removeEventListener('keydown', EscPopupClose);
+      document.removeEventListener('keydown', popupCloseEscHandler);
     }
   };
 
@@ -66,8 +68,8 @@
         var dataIndex = target.dataset.index;
         if (dataIndex) {
           MAP_FILTERS_CONTAINER.parentElement.insertBefore(window.card.renderAd(window.data.dataIncomingCopy ? window.data.dataIncomingCopy[dataIndex] : window.data.dataIncoming[dataIndex]), MAP_FILTERS_CONTAINER);
-          document.addEventListener('click', clickPopupClose);
-          document.addEventListener('keydown', EscPopupClose);
+          document.addEventListener('click', popupCloseClickHandler);
+          document.addEventListener('keydown', popupCloseEscHandler);
         }
         return;
       }
@@ -76,7 +78,7 @@
 
   };
 
-  window.form.disabledEditAdForm(true);
+  window.form.disableEditAdForm(true);
 
   var togglerMapAndForm = function () {
     MAP.classList.toggle('map--faded');
@@ -96,7 +98,7 @@
   MAP_PIN_MAIN.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-    window.form.activeMapAndForm();
+    window.form.setActiveMapAndForm();
 
     // начальные координаты указателя мыши
     var startCoords = {
@@ -118,11 +120,11 @@
       };
 
       var pinMainStyleTop = MAP_PIN_MAIN.offsetTop - shift.y;
-      if (pinMainStyleTop < 0) {
-        pinMainStyleTop = 0;
+      if (pinMainStyleTop < MIN_TOP_STYLE_PIN_MAIN) {
+        pinMainStyleTop = MIN_TOP_STYLE_PIN_MAIN;
       }
-      if (pinMainStyleTop > MAP_PINS.offsetHeight - MAP_PIN_MAIN_HEIGHT) {
-        pinMainStyleTop = MAP_PINS.offsetHeight - MAP_PIN_MAIN_HEIGHT;
+      if (pinMainStyleTop > MAX_TOP_STYLE_PIN_MAIN) {
+        pinMainStyleTop = MAX_TOP_STYLE_PIN_MAIN;
       }
 
       var pinMainStyleLeft = MAP_PIN_MAIN.offsetLeft - shift.x;
@@ -148,6 +150,8 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  setValueAddress();
 
   window.map = {
     renderPins: renderPins,

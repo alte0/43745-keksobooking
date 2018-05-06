@@ -24,14 +24,14 @@
   var MAP_FILTERS = document.querySelector('.map__filters');
   var AD_FORM_RESET = document.querySelector('.ad-form__reset');
 
-  var minPrice = function () {
+  var setMinPrice = function () {
     var PRICE = document.querySelector('#price');
     PRICE.min = TYPE_MIN_PRICE[TYPE.value];
     PRICE.placeholder = TYPE_MIN_PRICE[TYPE.value];
   };
 
   var typeChangeHandler = function () {
-    return minPrice();
+    return setMinPrice();
   };
 
   var syncSelect = function (evt, elSync) {
@@ -47,7 +47,7 @@
     syncSelect(evt, TIME_IN);
   };
 
-  var disabledNumberGuests = function () {
+  var setDisabledNumberGuests = function () {
 
     for (var i = 0; i < ROOM_NUMBER.options.length; i++) {
       var option = ROOM_NUMBER.options[i];
@@ -73,10 +73,10 @@
   };
 
   var roomChangeHandler = function () {
-    disabledNumberGuests();
+    setDisabledNumberGuests();
   };
 
-  var disabledEditAdForm = function (bool) {
+  var disableEditAdForm = function (bool) {
     var elementsFieldset = document.querySelectorAll('.ad-form fieldset');
     elementsFieldset.forEach(function (item) {
       item.disabled = bool;
@@ -99,45 +99,52 @@
   var submitHandler = function (evt) {
     evt.preventDefault();
     var formData = new FormData(evt.target);
-    window.backend.submitAd(formData, 'https://js.dump.academy/keksobooking', successForm, window.backend.onError);
+    window.backend.submitAd(formData, 'https://js.dump.academy/keksobooking', sendValidForm, window.backend.onError);
   };
 
-  var onLoad = function (data) {
+  var loadedSucces = function (data) {
     window.data.dataIncoming = data;
     MAP_PINS.appendChild(window.map.renderPins(data));
   };
 
-  var noActiveMapAndForm = function () {
+  var setNoActiveMapAndForm = function () {
+    var DELAY = 0;
     window.map.deleteElem('.map__card');
     window.map.deletePins();
     MAP_PIN_MAIN.style.left = MAP_PIN_MAIN_LEFT_COORDINATE;
     MAP_PIN_MAIN.style.top = MAP_PIN_MAIN_TOP_COORDINATE;
-    window.map.setValueAddress();
     window.map.togglerMapAndForm();
-    disabledEditAdForm(true);
+    disableEditAdForm(true);
+    setTimeout(function () {
+      window.map.setValueAddress();
+    }, DELAY);
   };
 
-  var activeMapAndForm = function () {
+  var setActiveMapAndForm = function () {
     if (MAP.classList.contains('map--faded')) {
       window.map.togglerMapAndForm();
       window.map.setValueAddress();
-      window.backend.load('https://js.dump.academy/keksobooking/data', onLoad, window.backend.onError);
+      window.backend.loadData('https://js.dump.academy/keksobooking/data', loadedSucces, window.backend.onError);
       MAP_PINS.addEventListener('click', window.map.pinClickHandler, true);
-      disabledEditAdForm(false);
+      disableEditAdForm(false);
     }
   };
 
-  var resetHandler = function () {
-    noActiveMapAndForm();
+  var formResetHandler = function () {
+    setNoActiveMapAndForm();
   };
 
-  var successForm = function () {
+  var sendValidForm = function () {
+    var DELAY = 3000;
     AD_FORM.reset();
-    noActiveMapAndForm();
+    setNoActiveMapAndForm();
     DIV_SUCCES.classList.toggle('hidden');
+    setTimeout(function () {
+      DIV_SUCCES.classList.toggle('hidden');
+    }, DELAY);
   };
 
-  var formFiltersOnChange = function (evt) {
+  var formFilterChangeHandler = function (evt) {
     var filtersPins = {};
     var SELECTS = evt.currentTarget.querySelectorAll('.map__filter');
     var FEATURES = evt.currentTarget.querySelectorAll('[name=features]');
@@ -155,11 +162,11 @@
       }
     });
 
-    var filtersHousingType = function (item, index, array) {
+    var filterHousingType = function (item, index, array) {
       return filtersPins['housing-type'] ? filtersPins['housing-type'] === array[index].offer.type : true;
     };
 
-    var filtersHousingPrice = function (item, index, array) {
+    var filterHousingPrice = function (item, index, array) {
       var valuePrice = true;
       var minHousingPrice = 0;
       var middleHousingPrice = 10000;
@@ -180,15 +187,15 @@
       return valuePrice;
     };
 
-    var filtersHousingRooms = function (item, index, array) {
+    var filterHousingRooms = function (item, index, array) {
       return filtersPins['housing-rooms'] ? parseInt(filtersPins['housing-rooms'], 10) === array[index].offer.rooms : true;
     };
 
-    var filtersHousingGuests = function (item, index, array) {
+    var filterHousingGuests = function (item, index, array) {
       return filtersPins['housing-guests'] ? parseInt(filtersPins['housing-guests'], 10) === array[index].offer.guests : true;
     };
 
-    var filtersFeatures = function (item, index, array) {
+    var filterFeatures = function (item, index, array) {
       var isfeatures;
       var counter = 0;
 
@@ -214,10 +221,10 @@
     };
 
     var filterAd = function (item, i, array) {
-      return filtersHousingType(item, i, array) && filtersHousingPrice(item, i, array) && filtersHousingRooms(item, i, array) && filtersHousingGuests(item, i, array) && filtersFeatures(item, i, array) ? true : false;
+      return filterHousingType(item, i, array) && filterHousingPrice(item, i, array) && filterHousingRooms(item, i, array) && filterHousingGuests(item, i, array) && filterFeatures(item, i, array) ? true : false;
     };
 
-    var isFilters = function () {
+    var renderFilteringData = function () {
       window.map.deleteElem('.map__card');
       window.data.dataIncomingCopy = window.data.dataIncoming.filter(filterAd);
       window.map.deletePins();
@@ -227,7 +234,7 @@
     if (timerId) {
       clearTimeout(timerId);
     }
-    var timerId = setTimeout(isFilters, DELAY);
+    var timerId = setTimeout(renderFilteringData, DELAY);
   };
 
   var addEventListeners = function () {
@@ -238,18 +245,18 @@
     ROOM_NUMBER.addEventListener('change', validateCapacityHandler);
     CAPACITY.addEventListener('change', validateCapacityHandler);
     AD_FORM.addEventListener('submit', submitHandler);
-    MAP_FILTERS.addEventListener('change', formFiltersOnChange);
-    AD_FORM_RESET.addEventListener('click', resetHandler);
+    MAP_FILTERS.addEventListener('change', formFilterChangeHandler);
+    AD_FORM_RESET.addEventListener('click', formResetHandler);
   };
 
-  minPrice();
-  disabledNumberGuests();
+  setMinPrice();
+  setDisabledNumberGuests();
   validateCapacity();
   addEventListeners();
 
   window.form = {
-    disabledEditAdForm: disabledEditAdForm,
-    activeMapAndForm: activeMapAndForm
+    disableEditAdForm: disableEditAdForm,
+    setActiveMapAndForm: setActiveMapAndForm
   };
 
 })();

@@ -15,8 +15,9 @@
     element.style.marginLeft = MAP_PIN_MARGIN_LEFT;
     element.style.marginTop = MAP_PIN_MARGIN_TOP;
     element.dataset.index = dataIndex;
-    element.querySelector('img').src = pin.author.avatar;
-    element.querySelector('img').alt = pin.offer.title;
+    var img = element.querySelector('img');
+    img.src = pin.author.avatar;
+    img.alt = pin.offer.title;
 
     return element;
   };
