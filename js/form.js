@@ -23,6 +23,12 @@
   var DIV_SUCCES = document.querySelector('.success');
   var MAP_FILTERS = document.querySelector('.map__filters');
   var AD_FORM_RESET = document.querySelector('.ad-form__reset');
+  var AVATAR_INPUT = document.querySelector('#avatar');
+  var AVATAR_PREVIEW = document.querySelector('.ad-form-header__preview img');
+  var AVATAR_PREVIEW_DEFAULT = 'img/muffin-grey.svg';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var IMAGES_INPUT = document.querySelector('#images');
+  var IMAGES_WRAP = document.querySelector('.ad-form__photo');
 
   var setMinPrice = function () {
     var PRICE = document.querySelector('#price');
@@ -118,6 +124,8 @@
     setTimeout(function () {
       window.map.setValueAddress();
     }, DELAY);
+    deleteImgsPreview();
+    AVATAR_PREVIEW.src = AVATAR_PREVIEW_DEFAULT;
   };
 
   var setActiveMapAndForm = function () {
@@ -137,6 +145,7 @@
   var sendValidForm = function () {
     var DELAY = 3000;
     AD_FORM.reset();
+    validateCapacity();
     setNoActiveMapAndForm();
     DIV_SUCCES.classList.toggle('hidden');
     setTimeout(function () {
@@ -237,6 +246,70 @@
     var timerId = setTimeout(renderFilteringData, DELAY);
   };
 
+  var avatarHandler = function () {
+    var file = AVATAR_INPUT.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var isImage = FILE_TYPES.some(function (item) {
+      return fileName.endsWith(item);
+    });
+    if (isImage) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+        AVATAR_PREVIEW.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
+    } else {
+      window.message.showMessage('Только изображения ' + FILE_TYPES);
+    }
+  };
+
+  var deleteImgsPreview = function () {
+    while (IMAGES_WRAP.lastChild) {
+      IMAGES_WRAP.removeChild(IMAGES_WRAP.lastChild);
+    }
+  };
+
+  var imagesHandler = function () {
+    var filesNames = [];
+    [].forEach.call(IMAGES_INPUT.files, function (item) {
+      filesNames.push(item.name.toLowerCase());
+    });
+
+    for (var i = 0; i < filesNames.length; i++) {
+      var isImage = FILE_TYPES.some(function (item) {
+        return filesNames[i].endsWith(item);
+      });
+      if (!isImage) {
+        window.message.showMessage('Только изображения ' + FILE_TYPES);
+        break;
+      }
+    }
+
+    [].forEach.call(IMAGES_INPUT.files, function (item) {
+      deleteImgsPreview();
+      var file = item;
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        var imgPreview = document.createElement('img');
+        imgPreview.style.height = 44 + 'px';
+        imgPreview.style.width = 40 + 'px';
+        imgPreview.src = reader.result;
+        IMAGES_WRAP.appendChild(imgPreview);
+      });
+
+      reader.readAsDataURL(file);
+    });
+
+    IMAGES_WRAP.style.display = 'flex';
+    IMAGES_WRAP.style.justifyContent = 'space-around';
+    IMAGES_WRAP.style.alignItems = 'center';
+    IMAGES_WRAP.style.width = 'auto';
+    IMAGES_WRAP.style.minWidth = '70px';
+  };
+
   var addEventListeners = function () {
     TYPE.addEventListener('change', typeChangeHandler);
     TIME_IN.addEventListener('change', timeInChangeHandler);
@@ -247,6 +320,8 @@
     AD_FORM.addEventListener('submit', submitHandler);
     MAP_FILTERS.addEventListener('change', formFilterChangeHandler);
     AD_FORM_RESET.addEventListener('click', formResetHandler);
+    AVATAR_INPUT.addEventListener('change', avatarHandler);
+    IMAGES_INPUT.addEventListener('change', imagesHandler);
   };
 
   setMinPrice();
