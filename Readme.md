@@ -2,6 +2,7 @@
 
 * Студент: [Максим Дмитриев](https://up.htmlacademy.ru/javascript/13/user/43745).
 * Наставник: [Андрей Карякин](https://htmlacademy.ru/profile/id133011).
+# [Посмотреть вживую](https://alte0.github.io/43745-keksobooking/)
 
 ---
 
